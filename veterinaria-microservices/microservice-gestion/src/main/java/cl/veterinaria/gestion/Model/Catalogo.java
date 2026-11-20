@@ -1,3 +1,5 @@
-public class Gestion {
+package cl.veterinaria.gestion.Model;
+
+public class Catalogo {
 
 }

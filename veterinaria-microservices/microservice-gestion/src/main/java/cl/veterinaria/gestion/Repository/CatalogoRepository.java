@@ -1,3 +1,5 @@
-public interface GestionRepository {
+package cl.veterinaria.gestion.Repository;
+
+public interface CatalogoRepository {
 
 }
