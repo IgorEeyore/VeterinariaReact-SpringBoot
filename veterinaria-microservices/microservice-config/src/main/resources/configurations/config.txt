@@ -1,0 +1,6 @@
+Aca se encuentran todas las configuraciones .yml de los microservicios tales como:
+
+* apigateway-msvc
+* user-msvc
+* gestion-msvc
+* cliente-msvc
