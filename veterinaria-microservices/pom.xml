@@ -24,6 +24,9 @@
 		<module>microservice-apigateway</module>
 		<module>microservice-config</module>
 		<module>microservice-eureka</module>
+		<module>microservice-cliente</module>
+		<module>microservice-gestion</module>
+		<module>microservice-user</module>
 	</modules>
 
 	<dependencies>
