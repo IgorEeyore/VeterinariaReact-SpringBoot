@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.0.9</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>cl.veterinaria</groupId>
 	<artifactId>apigateway</artifactId>
@@ -67,9 +67,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-    		<groupId>net.logstash.logback</groupId>
+			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
-    		<version>7.4</version> <!-- usa la última versión -->
+			<version>7.4</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
