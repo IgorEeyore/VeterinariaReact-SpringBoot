@@ -52,6 +52,48 @@ function Admin() {
             </div>
           </div>
         </div>
+
+        <div className="col-12 col-md-6">
+          <div className="card h-100 shadow-sm border-0 rounded-4 p-4 text-center">
+            <div className="card-body">
+              <div className="display-4 mb-3">📅</div>
+              <h3 className="fw-bold mb-3" style={{ color: "#2ec4b6" }}>
+                Revision de Agenda
+              </h3>
+              <p className="text-muted mb-4">
+                Revisa las citas agendadas y el historial de atenciones realizadas.
+              </p>
+              <Link
+                to="/admin/agenda"
+                className="btn text-white fw-bold px-4 py-2"
+                style={{ backgroundColor: "#2ec4b6" }}
+              >
+                Ir a Agenda
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-md-6">
+          <div className="card h-100 shadow-sm border-0 rounded-4 p-4 text-center">
+            <div className="card-body">
+              <div className="display-4 mb-3">✉️</div>
+              <h3 className="fw-bold mb-3" style={{ color: "#2D3161" }}>
+                Solicitudes de Contacto
+              </h3>
+              <p className="text-muted mb-4">
+                Revisa y gestiona los formularios recibidos desde la pagina de contacto.
+              </p>
+              <Link
+                to="/admin/contacto"
+                className="btn text-white fw-bold px-4 py-2"
+                style={{ backgroundColor: "#2D3161" }}
+              >
+                Ir a Contactos
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
