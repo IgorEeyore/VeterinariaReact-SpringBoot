@@ -3,21 +3,9 @@ import type { FormEvent } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import CampoFormulario from "../moleculas/CampoFormulario"
 
-interface Usuario {
-  id: number
-  nombre: string
-  correo: string
-  rol: "Admin" | "Cliente"
-  contrasena?: string
-}
-
-const usuariosIniciales: Usuario[] = [
-  { id: 1, nombre: "Admin", correo: "admin@demo.cl", rol: "Admin" },
-  { id: 2, nombre: "Cliente Ejemplo", correo: "cliente@correo.cl", rol: "Cliente" }
-]
-
 const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const formatoRut = /^[0-9]{7,8}[0-9kK]$/
+const API_REGISTRO = "http://localhost:8080/api/v1/auth/registrar"
 
 const validarRut = (rut: string): boolean => {
   const valor = rut.replace(/\./g, "").replace(/-/g, "")
@@ -38,27 +26,30 @@ const validarRut = (rut: string): boolean => {
   }
 
   const residuo = 11 - (suma % 11)
-  let dvEsperado = String(residuo)
-  if (residuo === 11) dvEsperado = "0"
-  if (residuo === 10) dvEsperado = "K"
+  const dvEsperado = residuo === 11 ? "0" : residuo === 10 ? "K" : String(residuo)
 
   return dv === dvEsperado
 }
 
 function FormularioRegistro() {
   const [nombre, setNombre] = useState("")
-  const [correo, setCorreo] = useState("")
   const [rut, setRut] = useState("")
+  const [correo, setCorreo] = useState("")
   const [contrasena, setContrasena] = useState("")
   const [error, setError] = useState("")
   const navigate = useNavigate()
 
-  const manejarEnvio = (e: FormEvent) => {
+  const manejarEnvio = async (e: FormEvent) => {
     e.preventDefault()
     setError("")
 
-    if (!nombre.trim() || !correo.trim() || !rut.trim() || !contrasena.trim()) {
-      setError("Todos los campos obligatorios deben ser completados")
+    if (
+      nombre.trim() === "" ||
+      rut.trim() === "" ||
+      correo.trim() === "" ||
+      contrasena.trim() === ""
+    ) {
+      setError("Por favor completa todos los campos obligatorios")
       return
     }
 
@@ -83,33 +74,31 @@ function FormularioRegistro() {
       return
     }
 
-    const guardados = localStorage.getItem("usuariosSanMarcos")
-    const usuarios: Usuario[] = guardados ? JSON.parse(guardados) : usuariosIniciales
+    try {
+      const respuesta = await fetch(API_REGISTRO, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          rut: rutLimpio,
+          nombre: nombre.trim(),
+          correo: correo.trim().toLowerCase(),
+          contrasena: contrasena.trim()
+        })
+      })
 
-    const existe = usuarios.some(
-      (u) => u.correo.toLowerCase() === correo.trim().toLowerCase()
-    )
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        setError(errorData?.mensaje || "No se pudo completar el registro")
+        return
+      }
 
-    if (existe) {
-      setError("Este correo ya se encuentra registrado")
-      return
+      alert("Registro exitoso. Ahora puedes iniciar sesion con tu cuenta.")
+      navigate("/login")
+    } catch {
+      setError("No se pudo conectar con el servidor de usuarios")
     }
-
-    const nuevoId = usuarios.length > 0 ? Math.max(...usuarios.map((u) => u.id)) + 1 : 1
-
-    const nuevoUsuario: Usuario = {
-      id: nuevoId,
-      nombre: nombre.trim(),
-      correo: correo.trim().toLowerCase(),
-      rol: "Cliente",
-      contrasena: contrasena.trim()
-    }
-
-    const nuevaLista = [...usuarios, nuevoUsuario]
-    localStorage.setItem("usuariosSanMarcos", JSON.stringify(nuevaLista))
-
-    alert("Registro exitoso. Ahora puedes iniciar sesion con tu cuenta.")
-    navigate("/login")
   }
 
   return (
