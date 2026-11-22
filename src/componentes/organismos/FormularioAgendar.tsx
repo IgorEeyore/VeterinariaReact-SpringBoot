@@ -13,7 +13,10 @@ interface Cita {
   fecha: string
   hora: string
   notas?: string
+  estado?: string
 }
+
+const API_CITAS = "http://localhost:8080/api/v1/citas"
 
 function FormularioAgendar() {
   const [nombreDueno, setNombreDueno] = useState("")
@@ -27,7 +30,7 @@ function FormularioAgendar() {
   const [error, setError] = useState("")
   const navigate = useNavigate()
 
-  const manejarEnvio = (e: FormEvent) => {
+  const manejarEnvio = async (e: FormEvent) => {
     e.preventDefault()
     setError("")
 
@@ -42,13 +45,7 @@ function FormularioAgendar() {
       return
     }
 
-    const guardadas = localStorage.getItem("citasSanMarcos")
-    const citasGuardadas: Cita[] = guardadas ? JSON.parse(guardadas) : []
-
-    const nuevoId = citasGuardadas.length > 0 ? Math.max(...citasGuardadas.map((c) => c.id)) + 1 : 1
-
-    const nuevaCita: Cita = {
-      id: nuevoId,
+    const datosCita = {
       nombreDueno: nombreDueno.trim(),
       telefono: telefono.trim(),
       nombreMascota: nombreMascota.trim(),
@@ -56,11 +53,33 @@ function FormularioAgendar() {
       servicio,
       fecha,
       hora,
-      notas: notas.trim()
+      notas: notas.trim(),
+      estado: "PENDIENTE"
     }
 
-    citasGuardadas.push(nuevaCita)
-    localStorage.setItem("citasSanMarcos", JSON.stringify(citasGuardadas))
+    try {
+      const token = localStorage.getItem("tokenSanMarcos")
+      const respuesta = await fetch(API_CITAS, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(datosCita)
+      })
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        setError(errorData?.mensaje || "No se pudo agendar la cita")
+        return
+      }
+    } catch {
+      const guardadas = localStorage.getItem("citasSanMarcos")
+      const citasGuardadas: Cita[] = guardadas ? JSON.parse(guardadas) : []
+      const nuevoId = citasGuardadas.length > 0 ? Math.max(...citasGuardadas.map((c) => c.id)) + 1 : 1
+      citasGuardadas.push({ id: nuevoId, ...datosCita })
+      localStorage.setItem("citasSanMarcos", JSON.stringify(citasGuardadas))
+    }
 
     alert(`Cita agendada con exito para ${nombreMascota} el dia ${fecha} a las ${hora}. Te esperamos en Veterinaria San Marcos.`)
     navigate("/")
