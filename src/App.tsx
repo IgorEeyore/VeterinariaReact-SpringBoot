@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 import Navbar from "./componentes/organismos/Navbar"
 import Footer from "./componentes/organismos/Footer"
+import RutaProtegida from "./componentes/organismos/RutaProtegida"
 
 import Inicio from "./paginas/Inicio"
 import Nosotros from "./paginas/Nosotros"
@@ -16,6 +17,7 @@ import Carrito from "./paginas/Carrito"
 import Admin from "./paginas/Admin"
 import AdminCatalogo from "./paginas/Admin-Catalogo"
 import AdminUsuarios from "./paginas/Admin-Usuarios"
+import AdminAgenda from "./paginas/Admin-Agenda"
 
 import "./App.css"
 
@@ -37,9 +39,38 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/carrito" element={<Carrito />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/catalogo" element={<AdminCatalogo />} />
-            <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+            <Route
+              path="/admin"
+              element={
+                <RutaProtegida rolRequerido="Admin">
+                  <Admin />
+                </RutaProtegida>
+              }
+            />
+            <Route
+              path="/admin/catalogo"
+              element={
+                <RutaProtegida rolRequerido="Admin">
+                  <AdminCatalogo />
+                </RutaProtegida>
+              }
+            />
+            <Route
+              path="/admin/usuarios"
+              element={
+                <RutaProtegida rolRequerido="Admin">
+                  <AdminUsuarios />
+                </RutaProtegida>
+              }
+            />
+            <Route
+              path="/admin/agenda"
+              element={
+                <RutaProtegida rolRequerido="Admin">
+                  <AdminAgenda />
+                </RutaProtegida>
+              }
+            />
           </Routes>
         </main>
 
