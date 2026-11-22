@@ -3,20 +3,8 @@ import type { FormEvent } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import CampoFormulario from "../moleculas/CampoFormulario"
 
-interface UsuarioRegistrado {
-  id: number
-  nombre: string
-  correo: string
-  rol: "Admin" | "Cliente"
-  contrasena?: string
-}
-
-const usuariosIniciales: UsuarioRegistrado[] = [
-  { id: 1, nombre: "Admin", correo: "admin@demo.cl", rol: "Admin" },
-  { id: 2, nombre: "Cliente Ejemplo", correo: "cliente@correo.cl", rol: "Cliente" }
-]
-
 const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const API_LOGIN = "http://localhost:8080/api/v1/auth/login"
 
 function FormularioLogin() {
   const [correo, setCorreo] = useState("")
@@ -24,7 +12,7 @@ function FormularioLogin() {
   const [error, setError] = useState("")
   const navigate = useNavigate()
 
-  const manejarEnvio = (e: FormEvent) => {
+  const manejarEnvio = async (e: FormEvent) => {
     e.preventDefault()
     setError("")
 
@@ -43,34 +31,38 @@ function FormularioLogin() {
       return
     }
 
-    const guardados = localStorage.getItem("usuariosSanMarcos")
-    const usuarios: UsuarioRegistrado[] = guardados ? JSON.parse(guardados) : usuariosIniciales
+    try {
+      const respuesta = await fetch(API_LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          correo: correo.trim().toLowerCase(),
+          contrasena: contrasena.trim()
+        })
+      })
 
-    const correoLimpio = correo.trim().toLowerCase()
-    const usuarioEncontrado = usuarios.find(
-      (u) => u.correo.toLowerCase() === correoLimpio
-    )
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        setError(errorData?.mensaje || "Correo o contrasena incorrectos")
+        return
+      }
 
-    let usuarioValido: UsuarioRegistrado | null = null
+      const data = await respuesta.json()
+      const usuarioValido = {
+        id: data.id,
+        nombre: data.nombre,
+        correo: data.correo,
+        rol: data.rol
+      }
 
-    if (correoLimpio === "admin@demo.cl" && contrasena === "1234") {
-      usuarioValido = { id: 1, nombre: "Admin", correo: "admin@demo.cl", rol: "Admin" }
-    } else if (correoLimpio === "user@demo.cl" && contrasena === "5678") {
-      usuarioValido = { id: 2, nombre: "Usuario", correo: "user@demo.cl", rol: "Cliente" }
-    } else if (
-      usuarioEncontrado &&
-      (!usuarioEncontrado.contrasena || usuarioEncontrado.contrasena === contrasena.trim())
-    ) {
-      usuarioValido = usuarioEncontrado
+      localStorage.setItem("tokenSanMarcos", data.token)
+      localStorage.setItem("usuarioActivo", JSON.stringify(usuarioValido))
+      navigate(usuarioValido.rol === "Admin" ? "/admin" : "/")
+    } catch {
+      setError("No se pudo conectar con el servidor de autenticacion")
     }
-
-    if (!usuarioValido) {
-      setError("Correo o contrasena incorrectos")
-      return
-    }
-
-    localStorage.setItem("usuarioActivo", JSON.stringify(usuarioValido))
-    navigate(usuarioValido.rol === "Admin" ? "/admin" : "/")
   }
 
   return (

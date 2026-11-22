@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import {
   Container,
   Navbar as BootstrapNavbar,
@@ -6,7 +6,33 @@ import {
   NavDropdown
 } from "react-bootstrap"
 
+interface UsuarioActivo {
+  id: number
+  nombre: string
+  correo: string
+  rol: "Admin" | "Cliente"
+}
+
+const leerUsuarioActivo = (): UsuarioActivo | null => {
+  const usuarioTexto = localStorage.getItem("usuarioActivo")
+  const token = localStorage.getItem("tokenSanMarcos")
+  if (usuarioTexto && token) {
+    return JSON.parse(usuarioTexto)
+  }
+  return null
+}
+
 function Navbar() {
+  useLocation()
+  const navigate = useNavigate()
+  const usuarioActivo = leerUsuarioActivo()
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("usuarioActivo")
+    localStorage.removeItem("tokenSanMarcos")
+    navigate("/login")
+  }
+
   return (
     <BootstrapNavbar
       style={{ backgroundColor: "#2D3161" }}
@@ -54,6 +80,12 @@ function Navbar() {
             Nosotros
           </Nav.Link>
 
+          {usuarioActivo?.rol === "Admin" && (
+            <Nav.Link as={NavLink} to="/admin" className="fw-bold text-warning">
+              Panel Admin
+            </Nav.Link>
+          )}
+
           <Link
             to="/carrito"
             className="btn btn-light btn-sm d-inline-flex align-items-center justify-content-center shadow-sm"
@@ -68,20 +100,42 @@ function Navbar() {
             🛒
           </Link>
 
-          <NavDropdown
-            title="Cuenta"
-            id="menu-cuenta"
-            align="end"
-            menuVariant="light"
-          >
-            <NavDropdown.Item as={Link} to="/login">
-              Iniciar sesion
-            </NavDropdown.Item>
+          {usuarioActivo ? (
+            <NavDropdown
+              title={usuarioActivo.nombre}
+              id="menu-cuenta"
+              align="end"
+              menuVariant="light"
+            >
+              <NavDropdown.ItemText className="small text-muted">
+                Rol: {usuarioActivo.rol}
+              </NavDropdown.ItemText>
+              <NavDropdown.Divider />
+              {usuarioActivo.rol === "Admin" && (
+                <NavDropdown.Item as={Link} to="/admin">
+                  Ir al Panel Admin
+                </NavDropdown.Item>
+              )}
+              <NavDropdown.Item onClick={cerrarSesion} className="text-danger fw-semibold">
+                Cerrar sesion
+              </NavDropdown.Item>
+            </NavDropdown>
+          ) : (
+            <NavDropdown
+              title="Cuenta"
+              id="menu-cuenta"
+              align="end"
+              menuVariant="light"
+            >
+              <NavDropdown.Item as={Link} to="/login">
+                Iniciar sesion
+              </NavDropdown.Item>
 
-            <NavDropdown.Item as={Link} to="/registro">
-              Registrarse
-            </NavDropdown.Item>
-          </NavDropdown>
+              <NavDropdown.Item as={Link} to="/registro">
+                Registrarse
+              </NavDropdown.Item>
+            </NavDropdown>
+          )}
         </Nav>
       </Container>
     </BootstrapNavbar>
