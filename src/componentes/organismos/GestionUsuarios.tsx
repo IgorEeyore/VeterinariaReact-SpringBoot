@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { FormEvent } from "react"
 import CampoFormulario from "../moleculas/CampoFormulario"
 
@@ -9,28 +9,56 @@ interface Usuario {
   rol: "Admin" | "Cliente"
 }
 
-const usuariosIniciales: Usuario[] = [
-  { id: 1, nombre: "Admin", correo: "admin@demo.cl", rol: "Admin" },
-  { id: 2, nombre: "Cliente Ejemplo", correo: "cliente@correo.cl", rol: "Cliente" }
-]
-
 const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const API_USUARIOS = "http://localhost:8080/api/v1/usuarios"
 
 function GestionUsuarios() {
-  const [usuarios, setUsuarios] = useState<Usuario[]>(() => {
-    const datos = localStorage.getItem("usuariosSanMarcos")
-    return datos ? JSON.parse(datos) : usuariosIniciales
-  })
-
+  const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [nombre, setNombre] = useState("")
   const [correo, setCorreo] = useState("")
   const [idEditando, setIdEditando] = useState<number | null>(null)
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
 
-  const guardarCambios = (nuevaLista: Usuario[]) => {
-    setUsuarios(nuevaLista)
-    localStorage.setItem("usuariosSanMarcos", JSON.stringify(nuevaLista))
+  const obtenerHeaders = () => {
+    const token = localStorage.getItem("tokenSanMarcos")
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    }
   }
+
+  const cargarUsuarios = async () => {
+    try {
+      const respuesta = await fetch(API_USUARIOS, {
+        headers: obtenerHeaders()
+      })
+      if (respuesta.ok) {
+        const data: Usuario[] = await respuesta.json()
+        setUsuarios(data)
+      }
+    } catch {
+      void 0
+    }
+  }
+
+  useEffect(() => {
+    const iniciarCarga = async () => {
+      const token = localStorage.getItem("tokenSanMarcos")
+      try {
+        const respuesta = await fetch(API_USUARIOS, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        })
+        if (respuesta.ok) {
+          const data: Usuario[] = await respuesta.json()
+          setUsuarios(data)
+        }
+      } catch {
+        void 0
+      }
+    }
+
+    iniciarCarga()
+  }, [])
 
   const abrirCrear = () => {
     setIdEditando(null)
@@ -53,7 +81,7 @@ function GestionUsuarios() {
     setCorreo("")
   }
 
-  const guardarUsuario = (e: FormEvent<HTMLFormElement>) => {
+  const guardarUsuario = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const nombreLimpio = nombre.trim()
@@ -69,35 +97,70 @@ function GestionUsuarios() {
       return
     }
 
-    if (idEditando !== null) {
-      const actualizados = usuarios.map((u) =>
-        u.id === idEditando
-          ? { ...u, nombre: nombreLimpio, correo: correoLimpio }
-          : u
-      )
-      guardarCambios(actualizados)
-      alert("Usuario actualizado con exito.")
-    } else {
-      const nuevoId = usuarios.length > 0 ? Math.max(...usuarios.map((u) => u.id)) + 1 : 1
-      const nuevoUsuario: Usuario = {
-        id: nuevoId,
-        nombre: nombreLimpio,
-        correo: correoLimpio,
-        rol: "Cliente"
-      }
-      guardarCambios([...usuarios, nuevoUsuario])
-      alert("Usuario creado con exito.")
-    }
+    try {
+      if (idEditando !== null) {
+        const respuesta = await fetch(`${API_USUARIOS}/${idEditando}`, {
+          method: "PUT",
+          headers: obtenerHeaders(),
+          body: JSON.stringify({ nombre: nombreLimpio, correo: correoLimpio })
+        })
 
-    cancelar()
+        if (!respuesta.ok) {
+          const errorData = await respuesta.json().catch(() => null)
+          alert(errorData?.mensaje || "No se pudo actualizar el usuario.")
+          return
+        }
+
+        alert("Usuario actualizado con exito.")
+      } else {
+        const respuesta = await fetch(API_USUARIOS, {
+          method: "POST",
+          headers: obtenerHeaders(),
+          body: JSON.stringify({
+            nombre: nombreLimpio,
+            correo: correoLimpio,
+            rol: "Cliente"
+          })
+        })
+
+        if (!respuesta.ok) {
+          const errorData = await respuesta.json().catch(() => null)
+          alert(errorData?.mensaje || "No se pudo crear el usuario.")
+          return
+        }
+
+        alert("Usuario creado con exito.")
+      }
+
+      await cargarUsuarios()
+      cancelar()
+    } catch {
+      alert("No se pudo conectar con el servidor de usuarios.")
+    }
   }
 
-  const eliminarUsuario = (usuario: Usuario) => {
+  const eliminarUsuario = async (usuario: Usuario) => {
     if (usuario.rol === "Admin") return
 
-    if (window.confirm(`Estas seguro de eliminar al usuario ${usuario.nombre}?`)) {
-      const filtrados = usuarios.filter((u) => u.id !== usuario.id)
-      guardarCambios(filtrados)
+    if (!window.confirm(`Estas seguro de eliminar al usuario ${usuario.nombre}?`)) {
+      return
+    }
+
+    try {
+      const respuesta = await fetch(`${API_USUARIOS}/${usuario.id}`, {
+        method: "DELETE",
+        headers: obtenerHeaders()
+      })
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        alert(errorData?.mensaje || "No se pudo eliminar el usuario.")
+        return
+      }
+
+      await cargarUsuarios()
+    } catch {
+      alert("No se pudo conectar con el servidor de usuarios.")
     }
   }
 
@@ -128,7 +191,7 @@ function GestionUsuarios() {
                   tipo="text"
                   nombre="nombre"
                   valor={nombre}
-                  placeholder="Ej: Juan Perez"
+                  placeholder="Ej: Maria Gonzalez"
                   obligatorio={true}
                   alCambiar={setNombre}
                 />
@@ -136,18 +199,18 @@ function GestionUsuarios() {
 
               <div className="col-12 col-md-6">
                 <CampoFormulario
-                  etiqueta="Correo electronico"
+                  etiqueta="Correo Electronico"
                   tipo="email"
                   nombre="correo"
                   valor={correo}
-                  placeholder="Ej: juan@correo.cl"
+                  placeholder="Ej: maria@correo.cl"
                   obligatorio={true}
                   alCambiar={setCorreo}
                 />
               </div>
             </div>
 
-            <div className="d-flex justify-content-end gap-2 mt-4">
+            <div className="d-flex justify-content-end gap-2 mt-3">
               <button
                 type="button"
                 className="btn btn-outline-secondary"
