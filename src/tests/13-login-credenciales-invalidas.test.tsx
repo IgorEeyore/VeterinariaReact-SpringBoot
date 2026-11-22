@@ -1,13 +1,33 @@
-
-import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import FormularioLogin from "../componentes/organismos/FormularioLogin";
+import { describe, it, expect, beforeEach, vi } from "vitest"
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react"
+import { MemoryRouter } from "react-router-dom"
+import FormularioLogin from "../componentes/organismos/FormularioLogin"
 
 describe("Prueba 13: Validacion de Login", () => {
   beforeEach(() => {
     localStorage.clear()
+    vi.restoreAllMocks()
     cleanup()
+
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+      const cuerpo = JSON.parse(String(init?.body || "{}"))
+      if (cuerpo.correo === "user@demo.cl" && cuerpo.contrasena === "5678") {
+        return {
+          ok: true,
+          json: async () => ({
+            token: "token-prueba",
+            id: 2,
+            nombre: "Usuario",
+            correo: "user@demo.cl",
+            rol: "Cliente"
+          })
+        } as Response
+      }
+      return {
+        ok: false,
+        json: async () => ({ mensaje: "Correo o contrasena incorrectos" })
+      } as Response
+    })
   })
 
   const iniciarSesion = (correo: string, contrasena: string) => {
@@ -26,33 +46,38 @@ describe("Prueba 13: Validacion de Login", () => {
       { target: { value: contrasena } }
     )
 
-    fireEvent.click(screen.getByRole("button", { name: "Ingresar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ingresar" }))
   }
 
-  it("rechaza una contrasena incorrecta", () => {
-    iniciarSesion("user@demo.cl", "incorrecta");
+  it("rechaza una contrasena incorrecta", async () => {
+    iniciarSesion("user@demo.cl", "incorrecta")
 
-    expect(screen.getByRole("alert").textContent).toContain(
-      "Correo o contrasena incorrectos"
-    )
-    expect(localStorage.getItem("usuarioActivo")).toBeNull();
+    await waitFor(() => {
+      expect(screen.getByRole("alert").textContent).toContain(
+        "Correo o contrasena incorrectos"
+      )
+    })
+    expect(localStorage.getItem("usuarioActivo")).toBeNull()
   })
 
-  it("rechaza un Gmail no registrado", () => {
-    iniciarSesion("noexiste@gmail.com", "clave123");
+  it("rechaza un Gmail no registrado", async () => {
+    iniciarSesion("noexiste@gmail.com", "clave123")
 
-    expect(screen.getByRole("alert").textContent).toContain(
-      "Correo o contrasena incorrectos"
-    )
-    expect(localStorage.getItem("usuarioActivo")).toBeNull();
+    await waitFor(() => {
+      expect(screen.getByRole("alert").textContent).toContain(
+        "Correo o contrasena incorrectos"
+      )
+    })
+    expect(localStorage.getItem("usuarioActivo")).toBeNull()
   })
 
-  it("permite ingresar con credenciales demo correctas", () => {
-    iniciarSesion("user@demo.cl", "5678");
+  it("permite ingresar con credenciales demo correctas", async () => {
+    iniciarSesion("user@demo.cl", "5678")
 
-    const usuario = JSON.parse(localStorage.getItem("usuarioActivo") || "null");
-
-    expect(usuario?.correo).toBe("user@demo.cl");
-    expect(usuario?.rol).toBe("Cliente");
+    await waitFor(() => {
+      const usuario = JSON.parse(localStorage.getItem("usuarioActivo") || "null")
+      expect(usuario?.correo).toBe("user@demo.cl")
+      expect(usuario?.rol).toBe("Cliente")
+    })
   })
 })
