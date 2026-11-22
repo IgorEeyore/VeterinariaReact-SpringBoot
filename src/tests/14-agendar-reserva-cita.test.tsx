@@ -1,6 +1,5 @@
-
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import FormularioAgendar from "../componentes/organismos/FormularioAgendar"
 
@@ -10,8 +9,12 @@ describe("Prueba 14: Formulario Agendar Cita - Flujo Completo", () => {
     vi.restoreAllMocks()
   })
 
-  it("permite completar el formulario y confirmar la reserva de atencion", () => {
+  it("permite completar el formulario y confirmar la reserva de atencion", async () => {
     const alerta = vi.spyOn(window, "alert").mockImplementation(() => {})
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({ id: 1 })
+    } as Response)
 
     render(
       <MemoryRouter>
@@ -40,8 +43,10 @@ describe("Prueba 14: Formulario Agendar Cita - Flujo Completo", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Confirmar y Agendar Cita" }))
 
-    expect(alerta).toHaveBeenCalledWith(
-      "Cita agendada con exito para Boby el dia 2026-11-20 a las 11:00. Te esperamos en Veterinaria San Marcos."
-    )
+    await waitFor(() => {
+      expect(alerta).toHaveBeenCalledWith(
+        "Cita agendada con exito para Boby el dia 2026-11-20 a las 11:00. Te esperamos en Veterinaria San Marcos."
+      )
+    })
   })
 })
