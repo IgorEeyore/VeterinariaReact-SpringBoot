@@ -1,87 +1,59 @@
+import { useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
+import { listaServicios } from "../datos/serviciosIniciales"
+import type { Servicio } from "../datos/serviciosIniciales"
 
-export interface Servicio {
-  id: number
-  nombre: string
-  precio: number
-  categoria: string
-  imagen?: string
-  descripcionCorta?: string
-  descripcionLarga?: string
-}
+const API_CATALOGO = "http://localhost:8080/api/v1/catalogo"
 
-export const listaServicios: Servicio[] = [
-  {
-    id: 1,
-    nombre: "Consulta General",
-    precio: 15000,
-    categoria: "Servicio",
-    imagen: "/img/consulta1.jpg",
-    descripcionCorta: "Revision fisica completa para tu mascota.",
-    descripcionLarga: "La consulta general incluye una revision exhaustiva de los signos vitales, peso, temperatura, revision dental, ocular y de oidos."
-  },
-  {
-    id: 2,
-    nombre: "Vacunacion Anual",
-    precio: 25000,
-    categoria: "Servicio",
-    imagen: "/img/vacuna2.jpg",
-    descripcionCorta: "Esquema de vacunacion preventiva.",
-    descripcionLarga: "Protege a tu mascota contra las enfermedades mas comunes y peligrosas. Incluye la vacuna Octuple o Triple Felina."
-  },
-  {
-    id: 3,
-    nombre: "Peluqueria Canina/Felina",
-    precio: 18000,
-    categoria: "Servicio",
-    imagen: "/img/peinado.jpg",
-    descripcionCorta: "Bano, corte de pelo y unas.",
-    descripcionLarga: "Servicio estetico completo. Incluye bano con shampoo hipoalergenico, limpieza de glandulas anales y corte."
-  },
-  {
-    id: 4,
-    nombre: "Desparasitacion Interna/Externa",
-    precio: 12000,
-    categoria: "Medicamento",
-    imagen: "/img/vacuna.jpg",
-    descripcionCorta: "Tratamiento contra parasitos y pulgas.",
-    descripcionLarga: "Control integral de parasitos gastrointestinales y ectoparasitos como pulgas y garrapatas con farmacos certificados."
-  },
-  {
-    id: 5,
-    nombre: "Cirugia Menor",
-    precio: 45000,
-    categoria: "Servicio",
-    imagen: "/img/consulta.jpg",
-    descripcionCorta: "Intervenciones quirurgicas programadas.",
-    descripcionLarga: "Procedimientos como esterilizacion, castracion o suturas menores con anestesia monitoreada y cuidados postoperatorios."
-  },
-  {
-    id: 6,
-    nombre: "Corte de Unas y Limpieza",
-    precio: 8000,
-    categoria: "Servicio",
-    imagen: "/img/uñas.jpg",
-    descripcionCorta: "Cuidado podologico y de almohadillas.",
-    descripcionLarga: "Corte seguro de unas para evitar sobrecrecimiento y sangrado, junto con hidratacion de almohadillas plantares."
+const obtenerServicioLocal = (idParam?: string): Servicio | undefined => {
+  const idNumerico = Number(idParam)
+  let catalogo: Servicio[] = listaServicios
+  try {
+    const guardados = localStorage.getItem("catalogoSanMarcos")
+    if (guardados) catalogo = JSON.parse(guardados)
+  } catch {
+    catalogo = listaServicios
   }
-]
+  const itemGuardado = catalogo.find((s) => s.id === idNumerico)
+  const itemOriginal = listaServicios.find((s) => s.id === idNumerico)
+
+  if (!itemGuardado) return undefined
+  return {
+    ...itemGuardado,
+    precio: Number(itemGuardado.precio),
+    imagen: itemGuardado.imagen || itemOriginal?.imagen || "",
+    descripcionCorta: itemGuardado.descripcionCorta || itemOriginal?.descripcionCorta || "",
+    descripcionLarga: itemGuardado.descripcionLarga || itemOriginal?.descripcionLarga || ""
+  }
+}
 
 function DetalleServicio() {
   const { id } = useParams()
-  const guardados = localStorage.getItem("catalogoSanMarcos")
-  const catalogo: Servicio[] = guardados ? JSON.parse(guardados) : listaServicios
-  const itemGuardado = catalogo.find((s) => s.id === Number(id))
-  const itemOriginal = listaServicios.find((s) => s.id === Number(id))
+  const [servicio, setServicio] = useState<Servicio | undefined>(() => obtenerServicioLocal(id))
 
-  const servicio = itemGuardado
-    ? {
-        ...itemGuardado,
-        imagen: itemGuardado.imagen || itemOriginal?.imagen || "",
-        descripcionCorta: itemGuardado.descripcionCorta || itemOriginal?.descripcionCorta || "",
-        descripcionLarga: itemGuardado.descripcionLarga || itemOriginal?.descripcionLarga || ""
+  useEffect(() => {
+    const cargarServicio = async () => {
+      if (!id) return
+      try {
+        const respuesta = await fetch(`${API_CATALOGO}/${id}`)
+        if (respuesta.ok) {
+          const data: Servicio = await respuesta.json()
+          const itemOriginal = listaServicios.find((s) => s.id === data.id)
+          setServicio({
+            ...data,
+            precio: Number(data.precio),
+            imagen: data.imagen || itemOriginal?.imagen || "",
+            descripcionCorta: data.descripcionCorta || itemOriginal?.descripcionCorta || "",
+            descripcionLarga: data.descripcionLarga || itemOriginal?.descripcionLarga || ""
+          })
+        }
+      } catch {
+        setServicio(obtenerServicioLocal(id))
       }
-    : undefined
+    }
+
+    cargarServicio()
+  }, [id])
 
   const agregarAlCarrito = () => {
     if (!servicio) return
