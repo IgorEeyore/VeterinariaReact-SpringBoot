@@ -9,7 +9,7 @@ function AdminCatalogo() {
           ← Volver al Panel
         </Link>
         <h2 className="fw-bold mb-0 mt-1" style={{ color: "#2D3161" }}>
-          Gestion de Catalogo
+          Gestión de Catálogo
         </h2>
       </div>
       <GestionCatalogo />

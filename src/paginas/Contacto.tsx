@@ -11,7 +11,7 @@ function Contacto() {
       </h1>
 
       <p className="text-center mb-5">
-        Comunicate con Veterinaria San Marcos para consultar por
+        Comunícate con Veterinaria San Marcos para consultar por
         servicios, horarios y precios.
       </p>
 
@@ -20,18 +20,18 @@ function Contacto() {
           <div className="card h-100 shadow-sm border-0 rounded-4">
             <div className="card-body p-4">
               <h2 className="h4 fw-bold" style={{ color: "#2D3161" }}>
-                Informacion de contacto
+                Información de contacto
               </h2>
 
               <p className="mt-3">
-                <strong>Direccion:</strong>
+                <strong>Dirección:</strong>
                 <br />
                 Av. Los Zapadores 904,
-                Region Metropolitana, Chile.
+                Región Metropolitana, Chile.
               </p>
 
               <p>
-                <strong>Telefono:</strong>
+                <strong>Teléfono:</strong>
                 <br />
                 <a href="tel:+56936726204" className="text-decoration-none">
                   +56 9 3672 6204
@@ -51,7 +51,7 @@ function Contacto() {
               </p>
 
               <p className="text-muted small mb-0">
-                Los horarios regulares de atencion no estan
+                Los horarios regulares de atención no están
                 especificados. Consulta directamente por
                 disponibilidad y precios.
               </p>
@@ -63,12 +63,12 @@ function Contacto() {
           <div className="card h-100 shadow-sm border-0 rounded-4">
             <div className="card-body p-4">
               <h2 className="h4 fw-bold" style={{ color: "#2D3161" }}>
-                Donde estamos?
+                ¿Dónde estamos?
               </h2>
 
               <p className="mt-3">
-                Encuentranos en Av. Los Zapadores 904,
-                Region Metropolitana, Chile.
+                Encuéntranos en Av. Los Zapadores 904,
+                Región Metropolitana, Chile.
               </p>
 
               <a
@@ -77,14 +77,14 @@ function Contacto() {
                 rel="noopener noreferrer"
                 className="btn btn-outline-secondary fw-semibold mb-3"
               >
-                Ver ubicacion en Google Maps
+                Ver ubicación en Google Maps
               </a>
 
               <hr />
 
               <p className="mb-0 text-muted small">
                 Para consultas sobre nuestros servicios puedes
-                llamar, escribirnos por correo o completar el formulario a continuacion.
+                llamar, escribirnos por correo o completar el formulario a continuación.
               </p>
             </div>
           </div>

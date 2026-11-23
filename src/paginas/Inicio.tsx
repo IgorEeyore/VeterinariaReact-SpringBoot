@@ -4,19 +4,19 @@ function Inicio() {
   const serviciosDestacados = [
     {
       titulo: "Consulta General",
-      descripcion: "Revision medica completa para prevenir y detectar cualquier problema de salud a tiempo.",
+      descripcion: "Revisión médica completa para prevenir y detectar cualquier problema de salud a tiempo.",
       precio: "$15.000",
       imagen: "/img/consulta.jpg"
     },
     {
-      titulo: "Vacunacion y Desparasitacion",
-      descripcion: "Protege a tu companero con esquemas de vacunacion certificados y control antiparasitario al dia.",
+      titulo: "Vacunación y Desparasitación",
+      descripcion: "Protege a tu compañero con esquemas de vacunación certificados y control antiparasitario al día.",
       precio: "Desde $12.000",
       imagen: "/img/vacuna.jpg"
     },
     {
-      titulo: "Peluqueria y Bano",
-      descripcion: "Bano estetico, corte de pelo, limpieza de oidos y corte de unas con el maximo cuidado.",
+      titulo: "Peluquería y Baño",
+      descripcion: "Baño estético, corte de pelo, limpieza de oídos y corte de uñas con el máximo cuidado.",
       precio: "Desde $18.000",
       imagen: "/img/peluqueria.jpg"
     }
@@ -26,12 +26,12 @@ function Inicio() {
     {
       icono: "🩺",
       titulo: "Veterinarios Certificados",
-      detalle: "Equipo multidisciplinario con vocacion y constante actualizacion medica."
+      detalle: "Equipo multidisciplinario con vocación y constante actualización médica."
     },
     {
       icono: "🏥",
       titulo: "Instalaciones Equipadas",
-      detalle: "Boxes clinicos, pabellon quirurgico y farmacia integrada para tu comodidad."
+      detalle: "Boxes clínicos, pabellón quirúrgico y farmacia integrada para tu comodidad."
     },
     {
       icono: "⏰",
@@ -40,25 +40,25 @@ function Inicio() {
     },
     {
       icono: "🐾",
-      titulo: "Atencion Personalizada",
-      detalle: "Cada mascota recibe un trato unico, respetuoso y lleno de carino."
+      titulo: "Atención Personalizada",
+      detalle: "Cada mascota recibe un trato único, respetuoso y lleno de cariño."
     }
   ]
 
   const testimonios = [
     {
       nombre: "Andrea Silva",
-      texto: "Salvaron a mi perrito Max cuando se enfermo a media noche. La atencion de urgencias fue rapida y los doctores muy empaticos. Recomendados al 100%.",
+      texto: "Salvaron a mi perrito Max cuando se enfermó a medianoche. La atención de urgencias fue rápida y los doctores muy empáticos. Recomendados al 100%.",
       estrellas: "★★★★★"
     },
     {
       nombre: "Carlos Mendoza",
-      texto: "El servicio de peluqueria es excelente. Mi gata suele ser muy nerviosa, pero la trataron con tanto amor y paciencia que salio ronroneando.",
+      texto: "El servicio de peluquería es excelente. Mi gata suele ser muy nerviosa, pero la trataron con tanto amor y paciencia que salió ronroneando.",
       estrellas: "★★★★★"
     },
     {
       nombre: "Valeria Rojas",
-      texto: "Tienen precios justos, instalaciones muy comodas y una atencion al cliente de primer nivel. Es mi clinica de confianza hace anos.",
+      texto: "Tienen precios justos, instalaciones muy cómodas y una atención al cliente de primer nivel. Es mi clínica de confianza hace años.",
       estrellas: "★★★★★"
     }
   ]
@@ -72,7 +72,7 @@ function Inicio() {
               Cuidamos a tu mejor amigo como si fuera nuestro
             </h1>
             <p className="lead mb-4 text-muted">
-              En Veterinaria San Marcos ofrecemos atencion medica integral, peluqueria y urgencias 24/7 para perros, gatos y animales exoticos. Mas de 10 anos de experiencia brindando salud y bienestar.
+              En Veterinaria San Marcos ofrecemos atención médica integral, peluquería y urgencias 24/7 para perros, gatos y animales exóticos. Más de 10 años de experiencia brindando salud y bienestar.
             </p>
             <div className="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
               <Link
@@ -80,13 +80,13 @@ function Inicio() {
                 className="btn text-white fw-bold px-4 py-2"
                 style={{ backgroundColor: "#2ec4b6" }}
               >
-                Ver Catalogo
+                Ver Catálogo
               </Link>
               <Link
                 to="/contacto"
                 className="btn btn-outline-secondary fw-bold px-4 py-2"
               >
-                Contactanos
+                Contáctanos
               </Link>
             </div>
           </div>
@@ -107,7 +107,7 @@ function Inicio() {
             Nuestros Servicios Destacados
           </h2>
           <p className="text-muted">
-            Atencion medica y estetica especializada con los mas altos estandares de calidad
+            Atención médica y estética especializada con los más altos estándares de calidad
           </p>
         </div>
 
@@ -137,7 +137,7 @@ function Inicio() {
                       className="btn btn-sm text-white fw-semibold px-3"
                       style={{ backgroundColor: "#2D3161" }}
                     >
-                      Ver en Catalogo
+                      Ver en Catálogo
                     </Link>
                   </div>
                 </div>
@@ -151,10 +151,10 @@ function Inicio() {
         <div className="container">
           <div className="text-center mb-5">
             <h2 className="fw-bold mb-2" style={{ color: "#2D3161" }}>
-              Por que confiar en Nosotros
+              Por qué confiar en Nosotros
             </h2>
             <p className="text-muted">
-              Compromiso profesional y tecnologia al servicio del cuidado animal
+              Compromiso profesional y tecnología al servicio del cuidado animal
             </p>
           </div>
 
@@ -185,7 +185,7 @@ function Inicio() {
               Lo que dicen nuestros clientes
             </h2>
             <p className="text-white-50">
-              La opinion de quienes confian dia a dia la salud de sus mascotas con nosotros
+              La opinión de quienes confían día a día la salud de sus mascotas con nosotros
             </p>
           </div>
 
@@ -215,7 +215,7 @@ function Inicio() {
             Urgencias Veterinarias 24/7
           </h2>
           <p className="text-muted mb-4 col-12 col-md-8 mx-auto">
-            Atencion de emergencias las 24 horas, todos los dias del ano. Nuestro equipo de turno esta listo para cuidar a tu mascota cuando mas lo necesita.
+            Atención de emergencias las 24 horas, todos los días del año. Nuestro equipo de turno está listo para cuidar a tu mascota cuando más lo necesita.
           </p>
           <div>
             <a

@@ -9,7 +9,7 @@ function AdminUsuarios() {
           ← Volver al Panel
         </Link>
         <h2 className="fw-bold mb-0 mt-1" style={{ color: "#2D3161" }}>
-          Gestion de Usuarios
+          Gestión de Usuarios
         </h2>
       </div>
       <GestionUsuarios />

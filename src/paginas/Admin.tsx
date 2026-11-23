@@ -7,7 +7,7 @@ function Admin() {
         <h1 className="fw-bold" style={{ color: "#2D3161" }}>
           Panel de Control
         </h1>
-        <p className="text-muted">Gestion interna de Veterinaria San Marcos</p>
+        <p className="text-muted">Gestión interna de Veterinaria San Marcos</p>
       </div>
 
       <div className="row g-4">
@@ -16,17 +16,17 @@ function Admin() {
             <div className="card-body">
               <div className="display-4 mb-3">📦</div>
               <h3 className="fw-bold mb-3" style={{ color: "#2ec4b6" }}>
-                Gestion de Catalogo
+                Gestión de Catálogo
               </h3>
               <p className="text-muted mb-4">
-                Administra los productos, servicios y precios del catalogo.
+                Administra los productos, servicios y precios del catálogo.
               </p>
               <Link
                 to="/admin/catalogo"
                 className="btn text-white fw-bold px-4 py-2"
                 style={{ backgroundColor: "#2ec4b6" }}
               >
-                Ir a Catalogo
+                Ir a Catálogo
               </Link>
             </div>
           </div>
@@ -37,7 +37,7 @@ function Admin() {
             <div className="card-body">
               <div className="display-4 mb-3">👥</div>
               <h3 className="fw-bold mb-3" style={{ color: "#2D3161" }}>
-                Gestion de Usuarios
+                Gestión de Usuarios
               </h3>
               <p className="text-muted mb-4">
                 Administra las cuentas de clientes y roles del sistema.
@@ -58,7 +58,7 @@ function Admin() {
             <div className="card-body">
               <div className="display-4 mb-3">📅</div>
               <h3 className="fw-bold mb-3" style={{ color: "#2ec4b6" }}>
-                Revision de Agenda
+                Revisión de Agenda
               </h3>
               <p className="text-muted mb-4">
                 Revisa las citas agendadas y el historial de atenciones realizadas.
@@ -82,7 +82,7 @@ function Admin() {
                 Solicitudes de Contacto
               </h3>
               <p className="text-muted mb-4">
-                Revisa y gestiona los formularios recibidos desde la pagina de contacto.
+                Revisa y gestiona los formularios recibidos desde la página de contacto.
               </p>
               <Link
                 to="/admin/contacto"
