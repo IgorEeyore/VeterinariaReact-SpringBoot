@@ -14,9 +14,16 @@ function RutaProtegida({ children, rolRequerido }: RutaProtegidaProps) {
     return <Navigate to="/login" replace />
   }
 
-  const usuario = JSON.parse(usuarioTexto)
+  let usuario: { rol?: string }
+  try {
+    usuario = JSON.parse(usuarioTexto)
+  } catch {
+    localStorage.removeItem("usuarioActivo")
+    localStorage.removeItem("tokenSanMarcos")
+    return <Navigate to="/login" replace />
+  }
 
-  if (rolRequerido && usuario.rol !== rolRequerido) {
+  if (rolRequerido && usuario.rol?.toLowerCase() !== rolRequerido.toLowerCase()) {
     return <Navigate to="/" replace />
   }
 
