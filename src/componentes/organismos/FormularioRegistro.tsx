@@ -119,7 +119,7 @@ function FormularioRegistro() {
               </div>
             )}
 
-            <form onSubmit={manejarEnvio}>
+            <form onSubmit={manejarEnvio} noValidate>
               <CampoFormulario
                 etiqueta="Nombre Completo"
                 tipo="text"

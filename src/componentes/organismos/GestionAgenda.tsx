@@ -17,8 +17,12 @@ const API_CITAS = "http://localhost:8080/api/v1/citas"
 
 function GestionAgenda() {
   const [citas, setCitas] = useState<Cita[]>(() => {
-    const datos = localStorage.getItem("citasSanMarcos")
-    return datos ? JSON.parse(datos) : []
+    try {
+      const datos = localStorage.getItem("citasSanMarcos")
+      return datos ? JSON.parse(datos) : []
+    } catch {
+      return []
+    }
   })
 
   useEffect(() => {
@@ -46,10 +50,10 @@ function GestionAgenda() {
 
   const cambiarEstado = async (cita: Cita, nuevoEstado: string) => {
     const token = localStorage.getItem("tokenSanMarcos")
-    const citaActualizada = { ...cita, estado: nuevoEstado }
+    let citaActualizada: Cita = { ...cita, estado: nuevoEstado }
 
     try {
-      await fetch(`${API_CITAS}/${cita.id}`, {
+      const respuesta = await fetch(`${API_CITAS}/${cita.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -57,6 +61,17 @@ function GestionAgenda() {
         },
         body: JSON.stringify(citaActualizada)
       })
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        alert(errorData?.mensaje || "No se pudo actualizar el estado de la cita.")
+        return
+      }
+
+      const data = await respuesta.json().catch(() => null)
+      if (data && data.id) {
+        citaActualizada = data
+      }
     } catch {
       void 0
     }
@@ -74,10 +89,16 @@ function GestionAgenda() {
     const token = localStorage.getItem("tokenSanMarcos")
 
     try {
-      await fetch(`${API_CITAS}/${cita.id}`, {
+      const respuesta = await fetch(`${API_CITAS}/${cita.id}`, {
         method: "DELETE",
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       })
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        alert(errorData?.mensaje || "No se pudo eliminar la cita.")
+        return
+      }
     } catch {
       void 0
     }
@@ -88,8 +109,9 @@ function GestionAgenda() {
   }
 
   const colorEstado = (estado?: string) => {
-    if (estado === "ATENDIDA") return "#198754"
-    if (estado === "CANCELADA") return "#dc3545"
+    const normalizado = (estado || "").toUpperCase()
+    if (normalizado === "ATENDIDA") return "#198754"
+    if (normalizado === "CANCELADA") return "#dc3545"
     return "#f59f00"
   }
 
@@ -111,7 +133,7 @@ function GestionAgenda() {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Fecha y Hora</th>
-              <th scope="col">Dueno</th>
+              <th scope="col">Dueño</th>
               <th scope="col">Mascota</th>
               <th scope="col">Servicio</th>
               <th scope="col">Notas</th>
