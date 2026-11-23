@@ -1,6 +1,5 @@
-
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import FormularioContacto from "../componentes/organismos/FormularioContacto"
 
 describe("Prueba 15: Formulario Contacto - Persistencia LocalStorage", () => {
@@ -9,8 +8,20 @@ describe("Prueba 15: Formulario Contacto - Persistencia LocalStorage", () => {
     vi.restoreAllMocks()
   })
 
-  it("almacena el mensaje enviado en localStorage bajo la clave mensajesContactoSanMarcos", () => {
+  it("almacena el mensaje enviado en localStorage bajo la clave mensajesContactoSanMarcos", async () => {
     vi.spyOn(window, "alert").mockImplementation(() => {})
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 1,
+        nombre: "Carlos Soto",
+        correo: "carlos@ejemplo.com",
+        telefono: "+56987654321",
+        asunto: "Consulta General",
+        mensaje: "Atienden feriados?",
+        leido: false
+      })
+    } as Response)
 
     render(<FormularioContacto />)
 
@@ -32,10 +43,12 @@ describe("Prueba 15: Formulario Contacto - Persistencia LocalStorage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Enviar Mensaje" }))
 
-    const guardado = localStorage.getItem("mensajesContactoSanMarcos")
-    expect(guardado).not.toBeNull()
-    const mensajes = JSON.parse(guardado || "[]")
-    expect(mensajes).toHaveLength(1)
-    expect(mensajes[0].nombre).toBe("Carlos Soto")
+    await waitFor(() => {
+      const guardado = localStorage.getItem("mensajesContactoSanMarcos")
+      expect(guardado).not.toBeNull()
+      const mensajes = JSON.parse(guardado || "[]")
+      expect(mensajes).toHaveLength(1)
+      expect(mensajes[0].nombre).toBe("Carlos Soto")
+    })
   })
 })

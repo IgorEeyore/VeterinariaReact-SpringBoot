@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import GestionCatalogo from "../componentes/organismos/GestionCatalogo"
 
 describe("Prueba 5: CRUD Catalogo - Crear", () => {
@@ -7,9 +7,10 @@ describe("Prueba 5: CRUD Catalogo - Crear", () => {
     localStorage.clear()
     vi.restoreAllMocks()
     vi.spyOn(window, "alert").mockImplementation(() => {})
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"))
   })
 
-  it("permite agregar un nuevo item y reflejarlo en la tabla", () => {
+  it("permite agregar un nuevo item y reflejarlo en la tabla", async () => {
     render(<GestionCatalogo />)
 
     const botonNuevo = screen.getByText("+ Nuevo Item")
@@ -24,7 +25,9 @@ describe("Prueba 5: CRUD Catalogo - Crear", () => {
     const botonGuardar = screen.getByText("Guardar")
     fireEvent.click(botonGuardar)
 
-    expect(screen.getByText("Ecografia de Control")).toBeDefined()
-    expect(screen.getByText("$32.000")).toBeDefined()
+    await waitFor(() => {
+      expect(screen.getByText("Ecografia de Control")).toBeDefined()
+      expect(screen.getByText("$32.000")).toBeDefined()
+    })
   })
 })
