@@ -1,23 +1,12 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CardServicio from "../moleculas/CardServicio"
-import { listaServicios } from "../../paginas/DetalleServicio"
+import { listaServicios } from "../../datos/serviciosIniciales"
+import type { Servicio } from "../../datos/serviciosIniciales"
 
-interface Servicio {
-  id: number
-  nombre: string
-  categoria: string
-  precio: number
-  imagen?: string
-  descripcionCorta?: string
-  descripcionLarga?: string
-}
+const API_CATALOGO = "http://localhost:8080/api/v1/catalogo"
 
-const obtenerServicios = (): Servicio[] => {
-  const guardados = localStorage.getItem("catalogoSanMarcos")
-  if (!guardados) return listaServicios
-
-  const parseados: Servicio[] = JSON.parse(guardados)
-  return parseados.map((item) => {
+const normalizarServicios = (items: Servicio[]): Servicio[] => {
+  return items.map((item) => {
     const original = listaServicios.find((s) => s.id === item.id)
     return {
       id: item.id,
@@ -31,10 +20,38 @@ const obtenerServicios = (): Servicio[] => {
   })
 }
 
+const obtenerServiciosLocales = (): Servicio[] => {
+  try {
+    const guardados = localStorage.getItem("catalogoSanMarcos")
+    if (!guardados) return listaServicios
+    return normalizarServicios(JSON.parse(guardados))
+  } catch {
+    return listaServicios
+  }
+}
+
 function ListadoCatalogo() {
-  const [servicios] = useState<Servicio[]>(obtenerServicios)
+  const [servicios, setServicios] = useState<Servicio[]>(obtenerServiciosLocales)
   const [busqueda, setBusqueda] = useState("")
   const [categoria, setCategoria] = useState("Todos")
+
+  useEffect(() => {
+    const cargarCatalogo = async () => {
+      try {
+        const respuesta = await fetch(API_CATALOGO)
+        if (respuesta.ok) {
+          const data: Servicio[] = await respuesta.json()
+          const normalizados = normalizarServicios(data)
+          setServicios(normalizados)
+          localStorage.setItem("catalogoSanMarcos", JSON.stringify(normalizados))
+        }
+      } catch {
+        void 0
+      }
+    }
+
+    cargarCatalogo()
+  }, [])
 
   const agregarAlCarrito = (id: number) => {
     const item = servicios.find((s) => s.id === id)

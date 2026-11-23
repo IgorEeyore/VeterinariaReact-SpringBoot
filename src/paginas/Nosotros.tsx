@@ -4,52 +4,52 @@ function Nosotros() {
   const valores = [
     {
       icono: "💙",
-      titulo: "Vocacion y Empatia",
-      descripcion: "Tratamos a cada paciente como a un miembro mas de la familia con respeto y carino."
+      titulo: "Vocación y Empatía",
+      descripcion: "Tratamos a cada paciente como a un miembro más de la familia con respeto y cariño."
     },
     {
       icono: "🔬",
-      titulo: "Tecnologia y Precision",
-      descripcion: "Equipamiento moderno para diagnosticos certeros y procedimientos quirurgicos seguros."
+      titulo: "Tecnología y Precisión",
+      descripcion: "Equipamiento moderno para diagnósticos certeros y procedimientos quirúrgicos seguros."
     },
     {
       icono: "🛡️",
-      titulo: "Etica y Transparencia",
-      descripcion: "Claridad absoluta en tratamientos, presupuestos y opciones medicas para tu tranquilidad."
+      titulo: "Ética y Transparencia",
+      descripcion: "Claridad absoluta en tratamientos, presupuestos y opciones médicas para tu tranquilidad."
     },
     {
       icono: "⏰",
       titulo: "Disponibilidad 24/7",
-      descripcion: "Guardia veterinaria activa todos los dias del ano para responder en emergencias."
+      descripcion: "Guardia veterinaria activa todos los días del año para responder en emergencias."
     }
   ]
 
   const equipo = [
     {
       nombre: "Dra. Marcela Contreras",
-      cargo: "Directora Medica y Cirugia",
-      detalle: "Mas de 12 anos de trayectoria liderando pabellon quirurgico y medicina preventiva canina.",
+      cargo: "Directora Médica y Cirugía",
+      detalle: "Más de 12 años de trayectoria liderando pabellón quirúrgico y medicina preventiva canina.",
       icono: "👩‍⚕️"
     },
     {
       nombre: "Dr. Felipe Morales",
       cargo: "Especialista en Urgencias",
-      detalle: "Experto en cuidados criticos y atencion intensiva 24 horas para perros, gatos y exoticos.",
+      detalle: "Experto en cuidados críticos y atención intensiva 24 horas para perros, gatos y exóticos.",
       icono: "👨‍⚕️"
     },
     {
       nombre: "Daniela Fuentes",
-      cargo: "Peluqueria y Estetica Clinica",
-      detalle: "Certificada en cosmetologia animal, manejo libre de estres y bano dermatologico.",
+      cargo: "Peluquería y Estética Clínica",
+      detalle: "Certificada en cosmetología animal, manejo libre de estrés y baño dermatológico.",
       icono: "✂️"
     }
   ]
 
   const estadisticas = [
-    { cifra: "+10", etiqueta: "Anos de experiencia" },
+    { cifra: "+10", etiqueta: "Años de experiencia" },
     { cifra: "+15.000", etiqueta: "Mascotas atendidas" },
     { cifra: "24/7", etiqueta: "Urgencias activas" },
-    { cifra: "100%", etiqueta: "Vocacion por la salud" }
+    { cifra: "100%", etiqueta: "Vocación por la salud" }
   ]
 
   return (
@@ -70,13 +70,13 @@ function Nosotros() {
               Nuestra Historia
             </span>
             <h2 className="fw-bold mb-3" style={{ color: "#2D3161" }}>
-              Mas de una decada entregando atencion de excelencia
+              Más de una década entregando atención de excelencia
             </h2>
             <p className="text-secondary mb-3">
-              Fundada en Av. Los Zapadores 904, Veterinaria San Marcos nacio con el proposito de brindar una atencion medica integral y accesible. Comenzamos como una pequena consulta barrial y hoy somos un centro veterinario de referencia en la comuna.
+              Fundada en Av. Los Zapadores 904, Veterinaria San Marcos nació con el propósito de brindar una atención médica integral y accesible. Comenzamos como una pequeña consulta barrial y hoy somos un centro veterinario de referencia en la comuna.
             </p>
             <p className="text-secondary mb-4">
-              Contamos con boxes de atencion personalizada, farmacia clinica, peluqueria especializada y servicio de urgencias ininterrumpido. Nuestro mayor orgullo es la confianza que miles de tutores han depositado en nuestras manos a lo largo de estos anos.
+              Contamos con boxes de atención personalizada, farmacia clínica, peluquería especializada y servicio de urgencias ininterrumpido. Nuestro mayor orgullo es la confianza que miles de tutores han depositado en nuestras manos a lo largo de estos años.
             </p>
             <div className="d-flex gap-3 flex-wrap">
               <Link
@@ -90,7 +90,7 @@ function Nosotros() {
                 to="/contacto"
                 className="btn btn-outline-secondary fw-semibold px-4 py-2"
               >
-                Donde Encontrarnos
+                Dónde Encontrarnos
               </Link>
             </div>
           </div>
@@ -129,11 +129,11 @@ function Nosotros() {
             <div className="d-flex align-items-center gap-3 mb-3">
               <span className="fs-1">🎯</span>
               <h3 className="fw-bold mb-0" style={{ color: "#2D3161" }}>
-                Nuestra Mision
+                Nuestra Misión
               </h3>
             </div>
             <p className="text-secondary mb-0">
-              Proporcionar cuidados medicos preventivos y curativos del mas alto nivel, combinando conocimientos clinicos actualizados con una empatia genuina hacia cada paciente y su familia, promoviendo la tenencia responsable en toda la comunidad.
+              Proporcionar cuidados médicos preventivos y curativos del más alto nivel, combinando conocimientos clínicos actualizados con una empatía genuina hacia cada paciente y su familia, promoviendo la tenencia responsable en toda la comunidad.
             </p>
           </div>
         </div>
@@ -143,11 +143,11 @@ function Nosotros() {
             <div className="d-flex align-items-center gap-3 mb-3">
               <span className="fs-1">🌟</span>
               <h3 className="fw-bold mb-0" style={{ color: "#2D3161" }}>
-                Nuestra Vision
+                Nuestra Visión
               </h3>
             </div>
             <p className="text-secondary mb-0">
-              Consolidarnos como el centro de salud animal preferido de la zona norte metropolitana, destacando por la calidad de nuestros servicios 24/7, la calidez en la atencion al cliente y un entorno clinico seguro, limpio y tecnologico.
+              Consolidarnos como el centro de salud animal preferido de la zona norte metropolitana, destacando por la calidad de nuestros servicios 24/7, la calidez en la atención al cliente y un entorno clínico seguro, limpio y tecnológico.
             </p>
           </div>
         </div>
@@ -159,7 +159,7 @@ function Nosotros() {
             Valores que nos Definen
           </h2>
           <p className="text-muted">
-            Principios irrenunciables en cada consulta, cirugia y procedimiento
+            Principios irrenunciables en cada consulta, cirugía y procedimiento
           </p>
         </div>
 
@@ -215,10 +215,10 @@ function Nosotros() {
         style={{ backgroundColor: "#2D3161" }}
       >
         <h2 className="display-6 fw-bold mb-3">
-          Tu companero merece la mejor atencion
+          Tu compañero merece la mejor atención
         </h2>
         <p className="lead text-white-50 mb-4 mx-auto" style={{ maxWidth: "600px" }}>
-          Ven a conocernos a Av. Los Zapadores 904 o reserva tu consulta medica hoy mismo de forma comoda y rapida.
+          Ven a conocernos a Av. Los Zapadores 904 o reserva tu consulta médica hoy mismo de forma cómoda y rápida.
         </p>
         <div className="d-flex justify-content-center gap-3 flex-wrap">
           <Link
@@ -226,13 +226,13 @@ function Nosotros() {
             className="btn text-white fw-bold px-4 py-2 rounded-pill"
             style={{ backgroundColor: "#2ec4b6" }}
           >
-            📅 Agendar Hora Medica
+            📅 Agendar Hora Médica
           </Link>
           <Link
             to="/contacto"
             className="btn btn-outline-light fw-semibold px-4 py-2 rounded-pill"
           >
-            Contactanos
+            Contáctanos
           </Link>
         </div>
       </section>

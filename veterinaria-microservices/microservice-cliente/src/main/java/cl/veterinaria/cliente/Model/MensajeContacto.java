@@ -32,7 +32,7 @@ public class MensajeContacto {
     @Column(nullable = false, length = 150)
     private String correo;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String telefono;
 
     @Column(nullable = false, length = 150)

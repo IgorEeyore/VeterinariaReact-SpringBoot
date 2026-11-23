@@ -42,4 +42,7 @@ public class CitaRequestDTO {
     private String hora;
 
     private String notas;
+
+    @Size(max = 50, message = "El estado no puede exceder los 50 caracteres")
+    private String estado;
 }

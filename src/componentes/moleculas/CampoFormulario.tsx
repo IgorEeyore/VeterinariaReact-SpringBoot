@@ -6,6 +6,7 @@ interface CampoFormularioProps {
   nombre: string
   valor: string
   placeholder?: string
+  min?: string
   obligatorio?: boolean
   alCambiar: (valor: string) => void
 }
@@ -16,6 +17,7 @@ function CampoFormulario({
   nombre,
   valor,
   placeholder,
+  min,
   obligatorio = false,
   alCambiar
 }: CampoFormularioProps) {
@@ -29,6 +31,7 @@ function CampoFormulario({
         nombre={nombre}
         valor={valor}
         placeholder={placeholder}
+        min={min}
         alCambiar={alCambiar}
       />
     </div>

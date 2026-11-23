@@ -13,7 +13,7 @@ import io.jsonwebtoken.Jwts;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret:defaultSecretKeyForVeterinariaMicroservices12345678901234567890}")
+    @Value("${jwt.secret:VetApp2026_secret_hospital_veterinario}")
     private String secretKey;
 
     public Claims extraerClaims(String token) {

@@ -1,78 +1,19 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { FormEvent } from "react"
 import CampoFormulario from "../moleculas/CampoFormulario"
+import { listaServicios } from "../../datos/serviciosIniciales"
+import type { Servicio } from "../../datos/serviciosIniciales"
 
-interface Servicio {
-  id: number
-  nombre: string
-  categoria: string
-  precio: number
-  descripcionCorta?: string
-  descripcionLarga?: string
-  imagen?: string
-}
-
-const serviciosIniciales: Servicio[] = [
-  {
-    id: 1,
-    nombre: "Consulta General",
-    categoria: "Servicio",
-    precio: 15000,
-    imagen: "/img/consulta1.jpg",
-    descripcionCorta: "Revision fisica completa para tu mascota.",
-    descripcionLarga: "La consulta general incluye una revision exhaustiva de los signos vitales, peso, temperatura, revision dental, ocular y de oidos."
-  },
-  {
-    id: 2,
-    nombre: "Vacunacion Anual",
-    categoria: "Servicio",
-    precio: 25000,
-    imagen: "/img/vacuna2.jpg",
-    descripcionCorta: "Esquema de vacunacion preventiva.",
-    descripcionLarga: "Protege a tu mascota contra las enfermedades mas comunes y peligrosas. Incluye la vacuna Octuple o Triple Felina."
-  },
-  {
-    id: 3,
-    nombre: "Peluqueria Canina/Felina",
-    categoria: "Servicio",
-    precio: 18000,
-    imagen: "/img/peinado.jpg",
-    descripcionCorta: "Bano, corte de pelo y unas.",
-    descripcionLarga: "Servicio estetico completo. Incluye bano con shampoo hipoalergenico, limpieza de glandulas anales y corte."
-  },
-  {
-    id: 4,
-    nombre: "Desparasitacion Interna/Externa",
-    categoria: "Medicamento",
-    precio: 12000,
-    imagen: "/img/vacuna.jpg",
-    descripcionCorta: "Tratamiento contra parasitos y pulgas.",
-    descripcionLarga: "Control integral de parasitos gastrointestinales y ectoparasitos como pulgas y garrapatas con farmacos certificados."
-  },
-  {
-    id: 5,
-    nombre: "Cirugia Menor",
-    categoria: "Servicio",
-    precio: 45000,
-    imagen: "/img/consulta.jpg",
-    descripcionCorta: "Intervenciones quirurgicas programadas.",
-    descripcionLarga: "Procedimientos como esterilizacion, castracion o suturas menores con anestesia monitoreada y cuidados postoperatorios."
-  },
-  {
-    id: 6,
-    nombre: "Corte de Unas y Limpieza",
-    categoria: "Servicio",
-    precio: 8000,
-    imagen: "/img/uñas.jpg",
-    descripcionCorta: "Cuidado podologico y de almohadillas.",
-    descripcionLarga: "Corte seguro de unas para evitar sobrecrecimiento y sangrado, junto con hidratacion de almohadillas plantares."
-  }
-]
+const API_CATALOGO = "http://localhost:8080/api/v1/catalogo"
 
 function GestionCatalogo() {
   const [servicios, setServicios] = useState<Servicio[]>(() => {
-    const datos = localStorage.getItem("catalogoSanMarcos")
-    return datos ? JSON.parse(datos) : serviciosIniciales
+    try {
+      const datos = localStorage.getItem("catalogoSanMarcos")
+      return datos ? JSON.parse(datos) : listaServicios
+    } catch {
+      return listaServicios
+    }
   })
 
   const [nombre, setNombre] = useState("")
@@ -80,8 +21,27 @@ function GestionCatalogo() {
   const [precio, setPrecio] = useState("")
   const [descripcionCorta, setDescripcionCorta] = useState("")
   const [descripcionLarga, setDescripcionLarga] = useState("")
+  const [imagenEditando, setImagenEditando] = useState("")
   const [idEditando, setIdEditando] = useState<number | null>(null)
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
+
+  useEffect(() => {
+    const cargarServicios = async () => {
+      try {
+        const respuesta = await fetch(API_CATALOGO)
+        if (respuesta.ok) {
+          const data: Servicio[] = await respuesta.json()
+          const normalizados = data.map((s) => ({ ...s, precio: Number(s.precio) }))
+          setServicios(normalizados)
+          localStorage.setItem("catalogoSanMarcos", JSON.stringify(normalizados))
+        }
+      } catch {
+        void 0
+      }
+    }
+
+    cargarServicios()
+  }, [])
 
   const guardarCambios = (nuevaLista: Servicio[]) => {
     setServicios(nuevaLista)
@@ -95,6 +55,7 @@ function GestionCatalogo() {
     setPrecio("")
     setDescripcionCorta("")
     setDescripcionLarga("")
+    setImagenEditando("")
     setMostrarFormulario(true)
   }
 
@@ -105,6 +66,7 @@ function GestionCatalogo() {
     setPrecio(String(item.precio))
     setDescripcionCorta(item.descripcionCorta || "")
     setDescripcionLarga(item.descripcionLarga || "")
+    setImagenEditando(item.imagen || "")
     setMostrarFormulario(true)
   }
 
@@ -115,9 +77,10 @@ function GestionCatalogo() {
     setPrecio("")
     setDescripcionCorta("")
     setDescripcionLarga("")
+    setImagenEditando("")
   }
 
-  const guardarServicio = (e: FormEvent<HTMLFormElement>) => {
+  const guardarServicio = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const nombreLimpio = nombre.trim()
@@ -133,31 +96,74 @@ function GestionCatalogo() {
       return
     }
 
+    const token = localStorage.getItem("tokenSanMarcos")
+    const payload = {
+      nombre: nombreLimpio,
+      categoria,
+      precio: precioNumero,
+      descripcionCorta: descripcionCorta.trim(),
+      descripcionLarga: descripcionLarga.trim(),
+      imagen: imagenEditando
+    }
+
     if (idEditando !== null) {
-      const actualizados = servicios.map((s) =>
-        s.id === idEditando
-          ? {
-              ...s,
-              nombre: nombreLimpio,
-              categoria,
-              precio: precioNumero,
-              descripcionCorta: descripcionCorta.trim(),
-              descripcionLarga: descripcionLarga.trim()
-            }
-          : s
-      )
+      let itemActualizado: Servicio = { id: idEditando, ...payload }
+
+      try {
+        const respuesta = await fetch(`${API_CATALOGO}/${idEditando}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify(payload)
+        })
+
+        if (!respuesta.ok) {
+          const errorData = await respuesta.json().catch(() => null)
+          alert(errorData?.mensaje || "No se pudo actualizar el servicio.")
+          return
+        }
+
+        const data = await respuesta.json().catch(() => null)
+        if (data && data.id) {
+          itemActualizado = { ...data, precio: Number(data.precio) }
+        }
+      } catch {
+        void 0
+      }
+
+      const actualizados = servicios.map((s) => (s.id === idEditando ? itemActualizado : s))
       guardarCambios(actualizados)
       alert("Servicio actualizado con exito.")
     } else {
-      const nuevoId = servicios.length > 0 ? Math.max(...servicios.map((s) => s.id)) + 1 : 1
-      const nuevoServicio: Servicio = {
-        id: nuevoId,
-        nombre: nombreLimpio,
-        categoria,
-        precio: precioNumero,
-        descripcionCorta: descripcionCorta.trim(),
-        descripcionLarga: descripcionLarga.trim()
+      const nuevoIdLocal = servicios.length > 0 ? Math.max(...servicios.map((s) => s.id)) + 1 : 1
+      let nuevoServicio: Servicio = { id: nuevoIdLocal, ...payload }
+
+      try {
+        const respuesta = await fetch(API_CATALOGO, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify(payload)
+        })
+
+        if (!respuesta.ok) {
+          const errorData = await respuesta.json().catch(() => null)
+          alert(errorData?.mensaje || "No se pudo crear el servicio.")
+          return
+        }
+
+        const data = await respuesta.json().catch(() => null)
+        if (data && data.id) {
+          nuevoServicio = { ...data, precio: Number(data.precio) }
+        }
+      } catch {
+        void 0
       }
+
       guardarCambios([...servicios, nuevoServicio])
       alert("Servicio creado con exito.")
     }
@@ -165,11 +171,30 @@ function GestionCatalogo() {
     cancelar()
   }
 
-  const eliminarServicio = (id: number) => {
-    if (window.confirm("Estas seguro de eliminar este item?")) {
-      const filtrados = servicios.filter((s) => s.id !== id)
-      guardarCambios(filtrados)
+  const eliminarServicio = async (id: number) => {
+    if (!window.confirm("Estas seguro de eliminar este item?")) {
+      return
     }
+
+    const token = localStorage.getItem("tokenSanMarcos")
+
+    try {
+      const respuesta = await fetch(`${API_CATALOGO}/${id}`, {
+        method: "DELETE",
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      })
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        alert(errorData?.mensaje || "No se pudo eliminar el servicio.")
+        return
+      }
+    } catch {
+      void 0
+    }
+
+    const filtrados = servicios.filter((s) => s.id !== id)
+    guardarCambios(filtrados)
   }
 
   return (

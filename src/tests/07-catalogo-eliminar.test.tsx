@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import GestionCatalogo from "../componentes/organismos/GestionCatalogo"
 
 describe("Prueba 7: CRUD Catalogo - Eliminar", () => {
@@ -7,9 +7,10 @@ describe("Prueba 7: CRUD Catalogo - Eliminar", () => {
     localStorage.clear()
     vi.restoreAllMocks()
     vi.spyOn(window, "confirm").mockReturnValue(true)
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"))
   })
 
-  it("remueve un servicio de la tabla tras confirmar la accion", () => {
+  it("remueve un servicio de la tabla tras confirmar la accion", async () => {
     render(<GestionCatalogo />)
 
     expect(screen.getByText("Cirugia Menor")).toBeDefined()
@@ -21,6 +22,8 @@ describe("Prueba 7: CRUD Catalogo - Eliminar", () => {
     const botonEliminar = filaCirugia?.querySelector(".btn-outline-danger") as HTMLButtonElement
     fireEvent.click(botonEliminar)
 
-    expect(screen.queryByText("Cirugia Menor")).toBeNull()
+    await waitFor(() => {
+      expect(screen.queryByText("Cirugia Menor")).toBeNull()
+    })
   })
 })

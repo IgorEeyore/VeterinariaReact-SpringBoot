@@ -11,10 +11,16 @@ interface ItemCarrito {
   imagen: string
 }
 
+const API_COMPRAS = "http://localhost:8080/api/v1/compras"
+
 function ContenidoCarrito() {
   const [carrito, setCarrito] = useState<ItemCarrito[]>(() => {
-    const guardado = localStorage.getItem("carritoSanMarcos")
-    return guardado ? JSON.parse(guardado) : []
+    try {
+      const guardado = localStorage.getItem("carritoSanMarcos")
+      return guardado ? JSON.parse(guardado) : []
+    } catch {
+      return []
+    }
   })
 
   const eliminarItem = (indice: number) => {
@@ -30,7 +36,42 @@ function ContenidoCarrito() {
     }
   }
 
-  const procesarPago = () => {
+  const procesarPago = async () => {
+    const agrupados = new Map<number, { servicioId: number; precioUnitario: number; cantidad: number }>()
+    for (const item of carrito) {
+      const existente = agrupados.get(item.id)
+      if (existente) {
+        existente.cantidad += 1
+      } else {
+        agrupados.set(item.id, {
+          servicioId: item.id,
+          precioUnitario: Number(item.precio),
+          cantidad: 1
+        })
+      }
+    }
+
+    const token = localStorage.getItem("tokenSanMarcos")
+
+    try {
+      const respuesta = await fetch(API_COMPRAS, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ items: Array.from(agrupados.values()) })
+      })
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        alert(errorData?.mensaje || "No se pudo procesar la compra.")
+        return
+      }
+    } catch {
+      void 0
+    }
+
     alert("Compra realizada con exito. Nos comunicaremos contigo para coordinar tu atencion.")
     setCarrito([])
     localStorage.removeItem("carritoSanMarcos")

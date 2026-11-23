@@ -59,7 +59,7 @@ function FormularioLogin() {
 
       localStorage.setItem("tokenSanMarcos", data.token)
       localStorage.setItem("usuarioActivo", JSON.stringify(usuarioValido))
-      navigate(usuarioValido.rol === "Admin" ? "/admin" : "/")
+      navigate(usuarioValido.rol?.toLowerCase() === "admin" ? "/admin" : "/")
     } catch {
       setError("No se pudo conectar con el servidor de autenticacion")
     }
@@ -83,7 +83,7 @@ function FormularioLogin() {
               </div>
             )}
 
-            <form onSubmit={manejarEnvio}>
+            <form onSubmit={manejarEnvio} noValidate>
               <CampoFormulario
                 etiqueta="Correo electronico"
                 tipo="email"

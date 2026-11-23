@@ -10,22 +10,25 @@ interface UsuarioActivo {
   id: number
   nombre: string
   correo: string
-  rol: "Admin" | "Cliente"
+  rol: string
 }
 
 const leerUsuarioActivo = (): UsuarioActivo | null => {
   const usuarioTexto = localStorage.getItem("usuarioActivo")
   const token = localStorage.getItem("tokenSanMarcos")
-  if (usuarioTexto && token) {
+  if (!usuarioTexto || !token) return null
+  try {
     return JSON.parse(usuarioTexto)
+  } catch {
+    return null
   }
-  return null
 }
 
 function Navbar() {
   useLocation()
   const navigate = useNavigate()
   const usuarioActivo = leerUsuarioActivo()
+  const esAdmin = usuarioActivo?.rol?.toLowerCase() === "admin"
 
   const cerrarSesion = () => {
     localStorage.removeItem("usuarioActivo")
@@ -69,7 +72,7 @@ function Navbar() {
           </Nav.Link>
 
           <Nav.Link as={NavLink} to="/catalogo">
-            Catalogo
+            Catálogo
           </Nav.Link>
 
           <Nav.Link as={NavLink} to="/novedades">
@@ -80,11 +83,9 @@ function Navbar() {
             Nosotros
           </Nav.Link>
 
-          {usuarioActivo?.rol === "Admin" && (
-            <Nav.Link as={NavLink} to="/admin" className="fw-bold text-warning">
-              Panel Admin
-            </Nav.Link>
-          )}
+          <Nav.Link as={NavLink} to="/contacto">
+            Contacto
+          </Nav.Link>
 
           <Link
             to="/carrito"
@@ -102,22 +103,37 @@ function Navbar() {
 
           {usuarioActivo ? (
             <NavDropdown
-              title={usuarioActivo.nombre}
+              title={esAdmin ? `Admin: ${usuarioActivo.nombre}` : usuarioActivo.nombre}
               id="menu-cuenta"
               align="end"
               menuVariant="light"
             >
               <NavDropdown.ItemText className="small text-muted">
-                Rol: {usuarioActivo.rol}
+                Rol: {esAdmin ? "Admin" : "Cliente"}
               </NavDropdown.ItemText>
               <NavDropdown.Divider />
-              {usuarioActivo.rol === "Admin" && (
-                <NavDropdown.Item as={Link} to="/admin">
-                  Ir al Panel Admin
-                </NavDropdown.Item>
+              {esAdmin && (
+                <>
+                  <NavDropdown.Item as={Link} to="/admin" className="fw-semibold">
+                    Panel de Control
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/catalogo">
+                    Gestión de Catálogo
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/usuarios">
+                    Gestión de Usuarios
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/agenda">
+                    Revisión de Agenda
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/contacto">
+                    Solicitudes de Contacto
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                </>
               )}
               <NavDropdown.Item onClick={cerrarSesion} className="text-danger fw-semibold">
-                Cerrar sesion
+                Cerrar sesión
               </NavDropdown.Item>
             </NavDropdown>
           ) : (
@@ -128,7 +144,7 @@ function Navbar() {
               menuVariant="light"
             >
               <NavDropdown.Item as={Link} to="/login">
-                Iniciar sesion
+                Iniciar sesión
               </NavDropdown.Item>
 
               <NavDropdown.Item as={Link} to="/registro">

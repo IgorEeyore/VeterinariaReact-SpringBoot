@@ -66,7 +66,7 @@ public class CatalogoController {
         @ApiResponse(responseCode = "400", description = "Solicitud inválida")
     })
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CatalogoResponseDTO> crear(@Valid @RequestBody CatalogoRequestDTO request) {
         return new ResponseEntity<>(catalogoService.crear(request), HttpStatus.CREATED);
     }
@@ -78,7 +78,7 @@ public class CatalogoController {
         @ApiResponse(responseCode = "404", description = "Servicio no encontrado")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CatalogoResponseDTO> actualizar(
             @PathVariable("id") Long id,
             @Valid @RequestBody CatalogoRequestDTO request) {
@@ -91,7 +91,7 @@ public class CatalogoController {
         @ApiResponse(responseCode = "404", description = "Servicio no encontrado")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) {
         catalogoService.eliminar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
 
 import Navbar from "./componentes/organismos/Navbar"
 import Footer from "./componentes/organismos/Footer"
@@ -10,7 +10,7 @@ import Catalogo from "./paginas/Catalogo"
 import DetalleServicio from "./paginas/DetalleServicio"
 import Novedades from "./paginas/Novedades"
 import Contacto from "./paginas/Contacto"
-import Login from "./paginas/login"
+import Login from "./paginas/Login"
 import Registro from "./paginas/Registro"
 import AgendarCita from "./paginas/AgendarCita"
 import Carrito from "./paginas/Carrito"
@@ -18,6 +18,7 @@ import Admin from "./paginas/Admin"
 import AdminCatalogo from "./paginas/Admin-Catalogo"
 import AdminUsuarios from "./paginas/Admin-Usuarios"
 import AdminAgenda from "./paginas/Admin-Agenda"
+import AdminContacto from "./paginas/Admin-Contacto"
 
 import "./App.css"
 
@@ -69,6 +70,34 @@ function App() {
                 <RutaProtegida rolRequerido="Admin">
                   <AdminAgenda />
                 </RutaProtegida>
+              }
+            />
+            <Route
+              path="/admin/contacto"
+              element={
+                <RutaProtegida rolRequerido="Admin">
+                  <AdminContacto />
+                </RutaProtegida>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <div className="container py-5 text-center">
+                  <h2 className="fw-bold mb-2" style={{ color: "#2D3161" }}>
+                    Página no encontrada
+                  </h2>
+                  <p className="text-muted mb-4">
+                    La ruta que intentas visitar no existe en Veterinaria San Marcos.
+                  </p>
+                  <Link
+                    to="/"
+                    className="btn text-white fw-bold px-4 py-2"
+                    style={{ backgroundColor: "#2ec4b6" }}
+                  >
+                    Volver al Inicio
+                  </Link>
+                </div>
               }
             />
           </Routes>

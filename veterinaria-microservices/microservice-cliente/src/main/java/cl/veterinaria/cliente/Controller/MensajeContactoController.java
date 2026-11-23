@@ -47,7 +47,7 @@ public class MensajeContactoController {
         @ApiResponse(responseCode = "200", description = "Listado de mensajes obtenido exitosamente")
     })
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<MensajeContactoResponseDTO>> obtenerTodos() {
         return new ResponseEntity<>(mensajeContactoService.obtenerTodos(), HttpStatus.OK);
     }
@@ -58,7 +58,7 @@ public class MensajeContactoController {
         @ApiResponse(responseCode = "404", description = "Mensaje no encontrado")
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MensajeContactoResponseDTO> obtenerPorId(@PathVariable("id") Long id) {
         return new ResponseEntity<>(mensajeContactoService.obtenerPorId(id), HttpStatus.OK);
     }
@@ -69,7 +69,7 @@ public class MensajeContactoController {
         @ApiResponse(responseCode = "404", description = "Mensaje no encontrado")
     })
     @PutMapping("/{id}/marcar-leido")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MensajeContactoResponseDTO> marcarLeido(@PathVariable("id") Long id) {
         return new ResponseEntity<>(mensajeContactoService.marcarLeido(id), HttpStatus.OK);
     }

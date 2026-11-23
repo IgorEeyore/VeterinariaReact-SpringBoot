@@ -1,7 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { FormEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import CampoFormulario from "../moleculas/CampoFormulario"
+import { listaServicios } from "../../datos/serviciosIniciales"
+import type { Servicio } from "../../datos/serviciosIniciales"
 
 interface Cita {
   id: number
@@ -17,18 +19,70 @@ interface Cita {
 }
 
 const API_CITAS = "http://localhost:8080/api/v1/citas"
+const API_CATALOGO = "http://localhost:8080/api/v1/catalogo"
+
+const obtenerFechaHoyLocal = (): string => {
+  const ahora = new Date()
+  const anio = ahora.getFullYear()
+  const mes = String(ahora.getMonth() + 1).padStart(2, "0")
+  const dia = String(ahora.getDate()).padStart(2, "0")
+  return `${anio}-${mes}-${dia}`
+}
+
+const obtenerHoraActualLocal = (): string => {
+  const ahora = new Date()
+  const horas = String(ahora.getHours()).padStart(2, "0")
+  const minutos = String(ahora.getMinutes()).padStart(2, "0")
+  return `${horas}:${minutos}`
+}
+
+const obtenerNombresServiciosLocales = (): string[] => {
+  try {
+    const guardados = localStorage.getItem("catalogoSanMarcos")
+    const items: Servicio[] = guardados ? JSON.parse(guardados) : listaServicios
+    const nombres = items.map((s) => s.nombre).filter(Boolean)
+    return nombres.length > 0 ? nombres : listaServicios.map((s) => s.nombre)
+  } catch {
+    return listaServicios.map((s) => s.nombre)
+  }
+}
 
 function FormularioAgendar() {
+  const [serviciosDisponibles, setServiciosDisponibles] = useState<string[]>(obtenerNombresServiciosLocales)
   const [nombreDueno, setNombreDueno] = useState("")
   const [telefono, setTelefono] = useState("")
   const [nombreMascota, setNombreMascota] = useState("")
   const [tipoMascota, setTipoMascota] = useState("Perro")
-  const [servicio, setServicio] = useState("Consulta General")
+  const [servicio, setServicio] = useState(() => obtenerNombresServiciosLocales()[0] || "Consulta General")
   const [fecha, setFecha] = useState("")
   const [hora, setHora] = useState("")
   const [notas, setNotas] = useState("")
   const [error, setError] = useState("")
   const navigate = useNavigate()
+
+  const fechaMinima = obtenerFechaHoyLocal()
+
+  useEffect(() => {
+    const cargarServicios = async () => {
+      try {
+        const respuesta = await fetch(API_CATALOGO)
+        if (respuesta.ok) {
+          const data: unknown = await respuesta.json()
+          if (Array.isArray(data)) {
+            const nombres = (data as Servicio[]).map((s) => s.nombre).filter(Boolean)
+            if (nombres.length > 0) {
+              setServiciosDisponibles(nombres)
+              setServicio((actual) => (nombres.includes(actual) ? actual : nombres[0]))
+            }
+          }
+        }
+      } catch {
+        void 0
+      }
+    }
+
+    cargarServicios()
+  }, [])
 
   const manejarEnvio = async (e: FormEvent) => {
     e.preventDefault()
@@ -42,6 +96,17 @@ function FormularioAgendar() {
       !hora.trim()
     ) {
       setError("Por favor completa todos los campos obligatorios")
+      return
+    }
+
+    const hoy = obtenerFechaHoyLocal()
+    if (fecha < hoy) {
+      setError("No se puede agendar una cita en una fecha pasada")
+      return
+    }
+
+    if (fecha === hoy && hora < obtenerHoraActualLocal()) {
+      setError("La hora seleccionada ya paso para el dia de hoy")
       return
     }
 
@@ -70,7 +135,7 @@ function FormularioAgendar() {
 
       if (!respuesta.ok) {
         const errorData = await respuesta.json().catch(() => null)
-        setError(errorData?.mensaje || "No se pudo agendar la cita")
+        setError(errorData?.detalles?.[0] || errorData?.mensaje || "No se pudo agendar la cita")
         return
       }
     } catch {
@@ -103,7 +168,7 @@ function FormularioAgendar() {
               </div>
             )}
 
-            <form onSubmit={manejarEnvio}>
+            <form onSubmit={manejarEnvio} noValidate>
               <div className="row">
                 <div className="col-12 col-md-6">
                   <CampoFormulario
@@ -166,12 +231,11 @@ function FormularioAgendar() {
                   value={servicio}
                   onChange={(e) => setServicio(e.target.value)}
                 >
-                  <option value="Consulta General">Consulta General</option>
-                  <option value="Vacunacion Anual">Vacunacion Anual</option>
-                  <option value="Peluqueria Canina/Felina">Peluqueria Canina/Felina</option>
-                  <option value="Cirugia Menor">Cirugia Menor</option>
-                  <option value="Desparasitacion Interna/Externa">Desparasitacion Interna/Externa</option>
-                  <option value="Corte de Unas y Limpieza">Corte de Unas y Limpieza</option>
+                  {serviciosDisponibles.map((nombreServicio) => (
+                    <option key={nombreServicio} value={nombreServicio}>
+                      {nombreServicio}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -182,6 +246,7 @@ function FormularioAgendar() {
                     tipo="date"
                     nombre="fecha"
                     valor={fecha}
+                    min={fechaMinima}
                     obligatorio={true}
                     alCambiar={setFecha}
                   />

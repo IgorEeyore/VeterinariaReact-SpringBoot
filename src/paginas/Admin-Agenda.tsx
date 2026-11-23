@@ -9,7 +9,7 @@ function AdminAgenda() {
           ← Volver al Panel
         </Link>
         <h2 className="fw-bold mb-0 mt-1" style={{ color: "#2D3161" }}>
-          Revision de Agenda e Historial de Atenciones
+          Revisión de Agenda e Historial de Atenciones
         </h2>
       </div>
       <GestionAgenda />

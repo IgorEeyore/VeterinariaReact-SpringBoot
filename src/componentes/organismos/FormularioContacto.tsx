@@ -12,6 +12,7 @@ const asuntos = [
 ]
 
 const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const API_CONTACTOS = "http://localhost:8080/api/v1/mensajes-contacto"
 
 function FormularioContacto() {
   const [nombre, setNombre] = useState("")
@@ -21,12 +22,13 @@ function FormularioContacto() {
   const [mensaje, setMensaje] = useState("")
   const [error, setError] = useState("")
 
-  const manejarEnvio = (e: FormEvent) => {
+  const manejarEnvio = async (e: FormEvent) => {
     e.preventDefault()
     setError("")
 
     const nombreLimpio = nombre.trim()
     const correoLimpio = correo.trim().toLowerCase()
+    const telefonoLimpio = telefono.trim()
     const mensajeLimpio = mensaje.trim()
 
     if (!nombreLimpio || !correoLimpio || !asunto || !mensajeLimpio) {
@@ -44,17 +46,45 @@ function FormularioContacto() {
       return
     }
 
-    const guardados = localStorage.getItem("mensajesContactoSanMarcos")
-    const listaMensajes = guardados ? JSON.parse(guardados) : []
-    const nuevoMensaje = {
-      id: Date.now(),
+    const payload = {
       nombre: nombreLimpio,
       correo: correoLimpio,
-      telefono: telefono.trim(),
+      telefono: telefonoLimpio,
       asunto,
       mensaje: mensajeLimpio
     }
-    listaMensajes.push(nuevoMensaje)
+
+    let mensajeGuardado = {
+      id: Date.now(),
+      ...payload,
+      fechaEnvio: new Date().toISOString(),
+      leido: false
+    }
+
+    try {
+      const respuesta = await fetch(API_CONTACTOS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json().catch(() => null)
+        setError(errorData?.detalles?.[0] || errorData?.mensaje || "No se pudo enviar el mensaje")
+        return
+      }
+
+      const data = await respuesta.json().catch(() => null)
+      if (data && data.id) {
+        mensajeGuardado = data
+      }
+    } catch {
+      void 0
+    }
+
+    const guardados = localStorage.getItem("mensajesContactoSanMarcos")
+    const listaMensajes = guardados ? JSON.parse(guardados) : []
+    listaMensajes.push(mensajeGuardado)
     localStorage.setItem("mensajesContactoSanMarcos", JSON.stringify(listaMensajes))
 
     alert("Mensaje enviado con exito. Nos comunicaremos contigo a la brevedad.")
@@ -88,7 +118,7 @@ function FormularioContacto() {
               </div>
             )}
 
-            <form onSubmit={manejarEnvio}>
+            <form onSubmit={manejarEnvio} noValidate>
               <CampoFormulario
                 etiqueta="Nombre completo"
                 tipo="text"

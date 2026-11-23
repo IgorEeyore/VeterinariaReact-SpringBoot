@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 type Categoria =
   | "Todas"
   | "Salud"
-  | "Prevencion"
+  | "Prevención"
   | "Cuidados"
 
 type Novedad = {
@@ -19,19 +19,19 @@ type Novedad = {
 const novedades: Novedad[] = [
   {
     id: 1,
-    categoria: "Prevencion",
-    titulo: "La importancia de la vacunacion",
+    categoria: "Prevención",
+    titulo: "La importancia de la vacunación",
     descripcion:
       "Las vacunas ayudan a proteger a perros y gatos frente a enfermedades. Consulta el calendario recomendado para tu mascota.",
     imagen: "/img/vacuna.jpg",
-    alt: "Atencion veterinaria relacionada con vacunacion"
+    alt: "Atención veterinaria relacionada con vacunación"
   },
   {
     id: 2,
     categoria: "Salud",
     titulo: "Controles veterinarios preventivos",
     descripcion:
-      "Una revision periodica permite conversar sobre alimentacion, peso y posibles cambios en la salud de tu mascota.",
+      "Una revisión periódica permite conversar sobre alimentación, peso y posibles cambios en la salud de tu mascota.",
     imagen: "/img/consulta.jpg",
     alt: "Consulta veterinaria para una mascota"
   },
@@ -42,23 +42,23 @@ const novedades: Novedad[] = [
     descripcion:
       "El cepillado y la higiene adecuados ayudan al bienestar de perros y gatos. Adapta el cuidado al tipo de pelaje.",
     imagen: "/img/peluqueria.jpg",
-    alt: "Servicio de peluqueria para mascotas"
+    alt: "Servicio de peluquería para mascotas"
   },
   {
     id: 4,
-    categoria: "Prevencion",
-    titulo: "Cuidados frente a parasitos",
+    categoria: "Prevención",
+    titulo: "Cuidados frente a parásitos",
     descripcion:
       "Las pulgas y garrapatas pueden afectar la salud animal. Consulta medidas preventivas apropiadas para tu mascota.",
     imagen: "/img/vacuna1.jpg",
-    alt: "Atencion preventiva de una mascota"
+    alt: "Atención preventiva de una mascota"
   },
   {
     id: 5,
     categoria: "Salud",
-    titulo: "Atencion de mascotas mayores",
+    titulo: "Atención de mascotas mayores",
     descripcion:
-      "Con la edad pueden cambiar las necesidades de alimentacion y seguimiento medico. Una evaluacion ayuda a detectar esas necesidades.",
+      "Con la edad pueden cambiar las necesidades de alimentación y seguimiento médico. Una evaluación ayuda a detectar esas necesidades.",
     imagen: "/img/mayor.jpg",
     alt: "Mascota mayor"
   },
@@ -67,16 +67,16 @@ const novedades: Novedad[] = [
     categoria: "Cuidados",
     titulo: "Preparar una visita al veterinario",
     descripcion:
-      "Lleva los antecedentes de salud disponibles y anota sintomas o cambios de conducta para facilitar la consulta.",
+      "Lleva los antecedentes de salud disponibles y anota síntomas o cambios de conducta para facilitar la consulta.",
     imagen: "/img/consulta1.jpg",
-    alt: "Consulta y atencion de una mascota"
+    alt: "Consulta y atención de una mascota"
   }
 ]
 
 const categorias: Categoria[] = [
   "Todas",
   "Salud",
-  "Prevencion",
+  "Prevención",
   "Cuidados"
 ]
 
@@ -99,14 +99,14 @@ function Novedades() {
         </h1>
 
         <p className="text-muted mb-0">
-          Informacion util para el bienestar y cuidado de tus mascotas.
+          Información útil para el bienestar y cuidado de tus mascotas.
         </p>
       </header>
 
       <div
         className="d-flex flex-wrap justify-content-center gap-2 mb-4"
         role="group"
-        aria-label="Filtrar novedades por categoria"
+        aria-label="Filtrar novedades por categoría"
       >
         {categorias.map((categoria) => (
           <button
@@ -184,7 +184,7 @@ function Novedades() {
             className="h4 fw-bold"
             style={{ color: "#2D3161" }}
           >
-            Necesitas atencion para tu mascota?
+            ¿Necesitas atención para tu mascota?
           </h2>
 
           <p className="text-muted">
@@ -211,7 +211,7 @@ function Novedades() {
       </section>
 
       <p className="text-center text-muted small mt-4 mb-0">
-        Contenido educativo de demostracion. No reemplaza la evaluacion veterinaria profesional.
+        Contenido educativo de demostración. No reemplaza la evaluación veterinaria profesional.
       </p>
     </div>
   )
