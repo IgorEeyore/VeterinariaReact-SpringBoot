@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +45,7 @@ public class CompraController {
         @ApiResponse(responseCode = "200", description = "Listado de compras obtenido")
     })
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CompraResponseDTO>> obtenerTodas() {
         return new ResponseEntity<>(compraService.obtenerTodas(), HttpStatus.OK);
     }
@@ -54,6 +56,7 @@ public class CompraController {
         @ApiResponse(responseCode = "404", description = "Compra no encontrada")
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CompraResponseDTO> obtenerPorId(@PathVariable("id") Long id) {
         return new ResponseEntity<>(compraService.obtenerPorId(id), HttpStatus.OK);
     }

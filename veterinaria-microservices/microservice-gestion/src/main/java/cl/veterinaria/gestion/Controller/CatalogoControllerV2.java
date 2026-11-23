@@ -71,7 +71,7 @@ public class CatalogoControllerV2 {
 
     @Operation(summary = "Crear servicio (V2 HATEOAS)")
     @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<CatalogoResponseDTO>> crear(@Valid @RequestBody CatalogoRequestDTO request) {
         CatalogoResponseDTO creado = catalogoService.crear(request);
         return new ResponseEntity<>(assembler.toModel(creado), HttpStatus.CREATED);
@@ -79,7 +79,7 @@ public class CatalogoControllerV2 {
 
     @Operation(summary = "Actualizar servicio (V2 HATEOAS)")
     @PutMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<CatalogoResponseDTO>> actualizar(
             @PathVariable("id") Long id,
             @Valid @RequestBody CatalogoRequestDTO request) {
@@ -89,7 +89,7 @@ public class CatalogoControllerV2 {
 
     @Operation(summary = "Eliminar servicio (V2)")
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) {
         catalogoService.eliminar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

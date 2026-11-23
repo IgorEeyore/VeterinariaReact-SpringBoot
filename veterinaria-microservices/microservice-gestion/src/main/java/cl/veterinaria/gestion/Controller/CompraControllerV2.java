@@ -11,6 +11,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +46,7 @@ public class CompraControllerV2 {
 
     @Operation(summary = "Listar compras (V2 HATEOAS)")
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public CollectionModel<EntityModel<CompraResponseDTO>> obtenerTodas() {
         List<EntityModel<CompraResponseDTO>> compras = compraService.obtenerTodas().stream()
                 .map(assembler::toModel)
@@ -56,6 +58,7 @@ public class CompraControllerV2 {
 
     @Operation(summary = "Obtener compra por ID (V2 HATEOAS)")
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public EntityModel<CompraResponseDTO> obtenerPorId(@PathVariable("id") Long id) {
         return assembler.toModel(compraService.obtenerPorId(id));
     }

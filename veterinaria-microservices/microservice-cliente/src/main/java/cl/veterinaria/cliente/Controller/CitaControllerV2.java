@@ -48,6 +48,7 @@ public class CitaControllerV2 {
 
     @Operation(summary = "Listar todas las citas (V2 HATEOAS)")
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public CollectionModel<EntityModel<CitaResponseDTO>> obtenerTodas() {
         List<EntityModel<CitaResponseDTO>> citas = citaService.obtenerTodas().stream()
                 .map(assembler::toModel)
@@ -59,12 +60,14 @@ public class CitaControllerV2 {
 
     @Operation(summary = "Obtener cita por ID (V2 HATEOAS)")
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public EntityModel<CitaResponseDTO> obtenerPorId(@PathVariable("id") Long id) {
         return assembler.toModel(citaService.obtenerPorId(id));
     }
 
     @Operation(summary = "Obtener citas por dueño (V2 HATEOAS)")
     @GetMapping(value = "/dueno/{nombreDueno}", produces = MediaTypes.HAL_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public CollectionModel<EntityModel<CitaResponseDTO>> obtenerPorDueno(@PathVariable("nombreDueno") String nombreDueno) {
         List<EntityModel<CitaResponseDTO>> citas = citaService.obtenerPorDueno(nombreDueno).stream()
                 .map(assembler::toModel)
@@ -76,6 +79,7 @@ public class CitaControllerV2 {
 
     @Operation(summary = "Actualizar cita (V2 HATEOAS)")
     @PutMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<CitaResponseDTO>> actualizarCita(
             @PathVariable("id") Long id,
             @Valid @RequestBody CitaRequestDTO request) {
@@ -85,6 +89,7 @@ public class CitaControllerV2 {
 
     @Operation(summary = "Cancelar cita (V2 HATEOAS)")
     @PutMapping(value = "/{id}/cancelar", produces = MediaTypes.HAL_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<CitaResponseDTO>> cancelarCita(@PathVariable("id") Long id) {
         CitaResponseDTO cancelada = citaService.cancelarCita(id);
         return new ResponseEntity<>(assembler.toModel(cancelada), HttpStatus.OK);

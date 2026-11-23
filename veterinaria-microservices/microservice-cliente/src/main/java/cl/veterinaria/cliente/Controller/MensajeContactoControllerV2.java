@@ -48,7 +48,7 @@ public class MensajeContactoControllerV2 {
 
     @Operation(summary = "Listar mensajes de contacto (V2 HATEOAS)")
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public CollectionModel<EntityModel<MensajeContactoResponseDTO>> obtenerTodos() {
         List<EntityModel<MensajeContactoResponseDTO>> mensajes = mensajeContactoService.obtenerTodos().stream()
                 .map(assembler::toModel)
@@ -60,14 +60,14 @@ public class MensajeContactoControllerV2 {
 
     @Operation(summary = "Obtener mensaje de contacto por ID (V2 HATEOAS)")
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public EntityModel<MensajeContactoResponseDTO> obtenerPorId(@PathVariable("id") Long id) {
         return assembler.toModel(mensajeContactoService.obtenerPorId(id));
     }
 
     @Operation(summary = "Marcar mensaje como leído (V2 HATEOAS)")
     @PutMapping(value = "/{id}/marcar-leido", produces = MediaTypes.HAL_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<MensajeContactoResponseDTO>> marcarLeido(@PathVariable("id") Long id) {
         MensajeContactoResponseDTO actualizado = mensajeContactoService.marcarLeido(id);
         return new ResponseEntity<>(assembler.toModel(actualizado), HttpStatus.OK);

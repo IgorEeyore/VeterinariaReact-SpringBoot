@@ -47,6 +47,7 @@ public class CitaController {
         @ApiResponse(responseCode = "200", description = "Listado de citas obtenido exitosamente")
     })
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CitaResponseDTO>> obtenerTodas() {
         return new ResponseEntity<>(citaService.obtenerTodas(), HttpStatus.OK);
     }
@@ -57,6 +58,7 @@ public class CitaController {
         @ApiResponse(responseCode = "404", description = "Cita no encontrada")
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CitaResponseDTO> obtenerPorId(@PathVariable("id") Long id) {
         return new ResponseEntity<>(citaService.obtenerPorId(id), HttpStatus.OK);
     }
@@ -66,6 +68,7 @@ public class CitaController {
         @ApiResponse(responseCode = "200", description = "Citas encontradas para el dueño")
     })
     @GetMapping("/dueno/{nombreDueno}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CitaResponseDTO>> obtenerPorDueno(@PathVariable("nombreDueno") String nombreDueno) {
         return new ResponseEntity<>(citaService.obtenerPorDueno(nombreDueno), HttpStatus.OK);
     }
@@ -77,6 +80,7 @@ public class CitaController {
         @ApiResponse(responseCode = "404", description = "Cita no encontrada")
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CitaResponseDTO> actualizarCita(
             @PathVariable("id") Long id,
             @Valid @RequestBody CitaRequestDTO request) {
@@ -89,6 +93,7 @@ public class CitaController {
         @ApiResponse(responseCode = "404", description = "Cita no encontrada")
     })
     @PutMapping("/{id}/cancelar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CitaResponseDTO> cancelarCita(@PathVariable("id") Long id) {
         return new ResponseEntity<>(citaService.cancelarCita(id), HttpStatus.OK);
     }
