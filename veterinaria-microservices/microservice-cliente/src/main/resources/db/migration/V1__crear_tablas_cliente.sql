@@ -8,14 +8,14 @@ CREATE TABLE citas (
     fecha DATE NOT NULL,
     hora VARCHAR(50) NOT NULL,
     notas TEXT,
-    estado VARCHAR(50) NOT NULL DEFAULT 'Pendiente'
+    estado VARCHAR(50) NOT NULL DEFAULT 'PENDIENTE'
 );
 
 CREATE TABLE mensajes_contacto (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
     correo VARCHAR(150) NOT NULL,
-    telefono VARCHAR(50) NOT NULL,
+    telefono VARCHAR(50),
     asunto VARCHAR(150) NOT NULL,
     mensaje TEXT NOT NULL,
     fecha_envio DATETIME NOT NULL,

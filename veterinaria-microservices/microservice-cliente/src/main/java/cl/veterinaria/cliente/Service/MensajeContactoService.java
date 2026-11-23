@@ -39,7 +39,7 @@ public class MensajeContactoService {
         MensajeContacto mensaje = new MensajeContacto();
         mensaje.setNombre(request.getNombre());
         mensaje.setCorreo(request.getCorreo());
-        mensaje.setTelefono(request.getTelefono());
+        mensaje.setTelefono(request.getTelefono() != null ? request.getTelefono().trim() : "");
         mensaje.setAsunto(request.getAsunto());
         mensaje.setMensaje(request.getMensaje());
         mensaje.setFechaEnvio(LocalDateTime.now());

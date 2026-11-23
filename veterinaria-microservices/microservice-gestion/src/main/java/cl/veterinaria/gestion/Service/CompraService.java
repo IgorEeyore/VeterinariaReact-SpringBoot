@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cl.veterinaria.gestion.Model.Catalogo;
 import cl.veterinaria.gestion.Model.Compra;
 import cl.veterinaria.gestion.Model.DetalleCompra;
 import cl.veterinaria.gestion.Repository.CatalogoRepository;
@@ -37,16 +38,16 @@ public class CompraService {
         double totalPrecio = 0.0;
 
         for (DetalleCompraDTO itemDTO : request.getItems()) {
-            // Validar que el servicio exista
-            catalogoRepository.findById(itemDTO.getServicioId())
+            Catalogo servicio = catalogoRepository.findById(itemDTO.getServicioId())
                     .orElseThrow(() -> new EntityNotFoundException("El servicio con ID " + itemDTO.getServicioId() + " no existe"));
 
+            double precioReal = servicio.getPrecio();
             DetalleCompra detalle = new DetalleCompra();
             detalle.setCompra(compra);
-            detalle.setServicioId(itemDTO.getServicioId());
-            detalle.setPrecioUnitario(itemDTO.getPrecioUnitario());
+            detalle.setServicioId(servicio.getId());
+            detalle.setPrecioUnitario(precioReal);
             detalle.setCantidad(itemDTO.getCantidad());
-            double subtotal = itemDTO.getPrecioUnitario() * itemDTO.getCantidad();
+            double subtotal = precioReal * itemDTO.getCantidad();
             detalle.setSubtotal(subtotal);
 
             totalCantidad += itemDTO.getCantidad();

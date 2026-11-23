@@ -17,7 +17,6 @@ public class DetalleCompraDTO {
     @NotNull(message = "El ID del servicio es obligatorio")
     private Long servicioId;
 
-    @NotNull(message = "El precio unitario es obligatorio")
     @Positive(message = "El precio unitario debe ser positivo")
     private Double precioUnitario;
 

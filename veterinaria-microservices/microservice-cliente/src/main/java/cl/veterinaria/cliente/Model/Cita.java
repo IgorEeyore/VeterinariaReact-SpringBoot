@@ -51,5 +51,5 @@ public class Cita {
     private String notas;
 
     @Column(nullable = false, length = 50)
-    private String estado = "Pendiente";
+    private String estado = "PENDIENTE";
 }

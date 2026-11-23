@@ -1,5 +1,8 @@
 package cl.veterinaria.cliente.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +43,31 @@ public class CitaService {
                 .collect(Collectors.toList());
     }
 
+    private void validarFechaYHora(LocalDate fecha, String hora, String mensajeFechaPasada) {
+        LocalDate hoy = LocalDate.now();
+        if (fecha != null && fecha.isBefore(hoy)) {
+            throw new IllegalArgumentException(mensajeFechaPasada);
+        }
+        if (fecha != null && fecha.equals(hoy) && hora != null && !hora.isBlank()) {
+            try {
+                LocalTime horaCita = LocalTime.parse(hora.trim());
+                if (horaCita.isBefore(LocalTime.now())) {
+                    throw new IllegalArgumentException("La hora seleccionada ya paso para el dia de hoy");
+                }
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Formato de hora invalido (use HH:mm)");
+            }
+        }
+    }
+
     @Transactional
     public CitaResponseDTO crearCita(CitaRequestDTO request) {
+        validarFechaYHora(
+                request.getFecha(),
+                request.getHora(),
+                "No se puede agendar una cita en una fecha pasada"
+        );
+
         Cita cita = new Cita();
         cita.setNombreDueno(request.getNombreDueno());
         cita.setTelefono(request.getTelefono());
@@ -51,7 +77,7 @@ public class CitaService {
         cita.setFecha(request.getFecha());
         cita.setHora(request.getHora());
         cita.setNotas(request.getNotas());
-        cita.setEstado("Pendiente");
+        cita.setEstado("PENDIENTE");
 
         Cita guardada = citaRepository.save(cita);
         return mapearADTO(guardada);
@@ -62,8 +88,14 @@ public class CitaService {
         Cita cita = citaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("La cita con ID " + id + " no existe"));
 
-        if ("Cancelada".equalsIgnoreCase(cita.getEstado()) || "Completada".equalsIgnoreCase(cita.getEstado())) {
-            throw new RuntimeException("No se puede modificar una cita en estado " + cita.getEstado());
+        boolean cambioFecha = request.getFecha() != null && !request.getFecha().equals(cita.getFecha());
+        boolean cambioHora = request.getHora() != null && !request.getHora().equals(cita.getHora());
+        if (cambioFecha || cambioHora) {
+            validarFechaYHora(
+                    request.getFecha(),
+                    request.getHora(),
+                    "No se puede reprogramar una cita a una fecha pasada"
+            );
         }
 
         cita.setNombreDueno(request.getNombreDueno());
@@ -74,6 +106,9 @@ public class CitaService {
         cita.setFecha(request.getFecha());
         cita.setHora(request.getHora());
         cita.setNotas(request.getNotas());
+        if (request.getEstado() != null && !request.getEstado().isBlank()) {
+            cita.setEstado(request.getEstado().trim().toUpperCase());
+        }
 
         Cita actualizada = citaRepository.save(cita);
         return mapearADTO(actualizada);
@@ -84,11 +119,7 @@ public class CitaService {
         Cita cita = citaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("La cita con ID " + id + " no existe"));
 
-        if ("Completada".equalsIgnoreCase(cita.getEstado())) {
-            throw new RuntimeException("No se puede cancelar una cita que ya fue completada");
-        }
-
-        cita.setEstado("Cancelada");
+        cita.setEstado("CANCELADA");
         Cita actualizada = citaRepository.save(cita);
         return mapearADTO(actualizada);
     }

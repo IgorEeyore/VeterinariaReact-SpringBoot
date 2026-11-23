@@ -81,6 +81,20 @@ public class UserService {
         return userModelAssemblers.toResponseDTO(user);
     }
 
+    private String normalizarRol(String rol) {
+        if (rol == null || rol.trim().isEmpty()) {
+            return "Cliente";
+        }
+        String limpio = rol.trim();
+        if ("Admin".equalsIgnoreCase(limpio)) {
+            return "Admin";
+        }
+        if ("Cliente".equalsIgnoreCase(limpio)) {
+            return "Cliente";
+        }
+        throw new IllegalArgumentException("Rol invalido: solo se permite Admin o Cliente");
+    }
+
     public UserResponseDTO crearUsuario(UserRequestDTO request) {
         String correoLimpio = request.getCorreo().trim().toLowerCase();
 
@@ -88,15 +102,22 @@ public class UserService {
             throw new RuntimeException("Este correo ya se encuentra registrado");
         }
 
+        String rutLimpio = (request.getRut() != null && !request.getRut().trim().isEmpty())
+                ? request.getRut().trim()
+                : null;
+        if (rutLimpio != null && userRepository.existsByRut(rutLimpio)) {
+            throw new RuntimeException("Este RUN ya se encuentra registrado");
+        }
+
         User user = new User();
-        user.setRut(request.getRut() != null && !request.getRut().trim().isEmpty() ? request.getRut().trim() : null);
+        user.setRut(rutLimpio);
         user.setNombre(request.getNombre().trim());
         user.setCorreo(correoLimpio);
         String clave = (request.getContrasena() != null && !request.getContrasena().trim().isEmpty())
                 ? request.getContrasena().trim()
                 : "1234";
         user.setContrasena(passwordEncoder.encode(clave));
-        user.setRol(request.getRol() != null && !request.getRol().trim().isEmpty() ? request.getRol().trim() : "Cliente");
+        user.setRol(normalizarRol(request.getRol()));
 
         return userModelAssemblers.toResponseDTO(userRepository.save(user));
     }
@@ -113,10 +134,17 @@ public class UserService {
         user.setNombre(request.getNombre().trim());
         user.setCorreo(correoLimpio);
         if (request.getRut() != null && !request.getRut().trim().isEmpty()) {
-            user.setRut(request.getRut().trim());
+            String rutLimpio = request.getRut().trim();
+            if (!rutLimpio.equalsIgnoreCase(user.getRut()) && userRepository.existsByRut(rutLimpio)) {
+                throw new RuntimeException("Este RUN ya se encuentra registrado");
+            }
+            user.setRut(rutLimpio);
         }
         if (request.getContrasena() != null && !request.getContrasena().trim().isEmpty()) {
             user.setContrasena(passwordEncoder.encode(request.getContrasena().trim()));
+        }
+        if (request.getRol() != null && !request.getRol().trim().isEmpty()) {
+            user.setRol(normalizarRol(request.getRol()));
         }
 
         return userModelAssemblers.toResponseDTO(userRepository.save(user));
