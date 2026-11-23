@@ -69,7 +69,8 @@ function ContenidoCarrito() {
         return
       }
     } catch {
-      void 0
+      alert("No se pudo conectar con el servidor de compras. Intenta nuevamente.")
+      return
     }
 
     alert("Compra realizada con exito. Nos comunicaremos contigo para coordinar tu atencion.")
